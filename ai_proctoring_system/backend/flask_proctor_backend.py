@@ -16,6 +16,12 @@ print("📦 Loading YOLOv8 model...")
 model = YOLO('yolov8n.pt')
 print("✅ YOLOv8 model loaded. Classes available:", len(model.names))
 
+print("⚙️ Warming up model to prevent first-request timeout...")
+dummy_img = np.zeros((640, 640, 3), dtype=np.uint8)
+_ = model(dummy_img, verbose=False)
+print("✅ Model warm-up complete.")
+
+
 # ─── State ───────────────────────────────────────────────────────────────────
 prev_frame = None
 last_face_timestamp = time.time()
