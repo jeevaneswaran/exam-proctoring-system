@@ -192,7 +192,9 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
 
     // ─── 3. Backend health check ──────────────────────────────────────
     useEffect(() => {
-        fetch(`${BACKEND_URL}/health`)
+        fetch(`${BACKEND_URL}/health`, {
+            headers: { 'bypass-tunnel-reminder': 'true' }
+        })
             .then(r => r.json())
             .then(d => { if (d.status === 'online') { setBackendOnline(true); console.log("✅ YOLO Backend online") } })
             .catch(() => console.warn("⚠️ YOLO Backend offline"))
@@ -229,7 +231,10 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
         try {
             const res = await fetch(`${BACKEND_URL}/proctor/detect`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: {
+                    'Content-Type': 'application/json',
+                    'bypass-tunnel-reminder': 'true'
+                },
                 body: JSON.stringify({ image: screenshot }),
                 signal: AbortSignal.timeout(20000)
             })
