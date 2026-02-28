@@ -1,8 +1,9 @@
-django
-djangorestframework
-djangorestframework-simplejwt
-django-cors-headers
-opencv-python
+Flask
+Flask-CORS
+supabase
+gunicorn
+opencv-python-headless
 ultralytics
 pillow
 numpy
+python-dotenv
