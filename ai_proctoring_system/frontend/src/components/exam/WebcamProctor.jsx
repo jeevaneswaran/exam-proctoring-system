@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { AlertTriangle, ShieldCheck, ShieldAlert, Eye, Camera } from 'lucide-react'
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
-const BACKEND_URL = 'http://localhost:5001'
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'
 const FRAME_INTERVAL_MS = 2500     // Send to YOLO every 2.5s
 const INFERENCE_INTERVAL_MS = 150  // Run MediaPipe every 150ms (smooth face box)
 const HEAD_YAW_WARN = 45        // Degrees before side-look warning
