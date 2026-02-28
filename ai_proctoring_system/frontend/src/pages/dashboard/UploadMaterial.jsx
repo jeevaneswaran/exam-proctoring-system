@@ -99,8 +99,8 @@ const UploadMaterial = () => {
                         <span className="h-1 w-8 bg-amber-600 rounded-full"></span>
                         Constructor Mode
                     </div>
-                    <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">Upload Study Material</h1>
-                    <p className="text-sm font-medium text-gray-500 lowercase tracking-widest leading-relaxed">
+                    <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Upload Study Material</h1>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 lowercase tracking-widest leading-relaxed">
                         share educational resources and study material with your students
                     </p>
                 </header>
@@ -127,9 +127,9 @@ const UploadMaterial = () => {
 
                 <form onSubmit={handleSubmit} className="space-y-8 animate-slide-up" style={{ animationDelay: '0.1s' }}>
                     {/* Material Information Box */}
-                    <div className="bg-white p-10 rounded-[40px] border border-orange-100 shadow-sm">
+                    <div className="bg-white dark:bg-gray-900 p-10 rounded-[40px] border border-orange-100 shadow-sm">
                         <div className="mb-8">
-                            <h3 className="text-lg font-black text-gray-900 mb-1">Material Information</h3>
+                            <h3 className="text-lg font-black text-gray-900 dark:text-white mb-1">Material Information</h3>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest italic">fill the details of your study material</p>
                         </div>
 
@@ -145,7 +145,7 @@ const UploadMaterial = () => {
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     placeholder="Enter material title here..."
-                                    className="w-full px-6 py-5 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 font-bold placeholder:text-gray-200 focus:outline-none focus:border-amber-600 focus:bg-white transition-all shadow-inner"
+                                    className="w-full px-6 py-5 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 dark:text-white font-bold placeholder:text-gray-200 focus:outline-none focus:border-amber-600 focus:bg-white transition-all shadow-inner"
                                     required
                                     disabled={uploading}
                                 />
@@ -182,7 +182,7 @@ const UploadMaterial = () => {
                                                 <CheckCircle2 className="h-8 w-8" />
                                             </div>
                                             <div className="text-center">
-                                                <p className="text-sm font-black text-gray-900">{selectedFile.name}</p>
+                                                <p className="text-sm font-black text-gray-900 dark:text-white">{selectedFile.name}</p>
                                                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
                                                     {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
                                                 </p>
@@ -190,7 +190,7 @@ const UploadMaterial = () => {
                                         </>
                                     ) : (
                                         <>
-                                            <div className="h-16 w-16 rounded-2xl bg-white text-orange-500 flex items-center justify-center shadow-md">
+                                            <div className="h-16 w-16 rounded-2xl bg-white dark:bg-gray-900 text-orange-500 flex items-center justify-center shadow-md">
                                                 <UploadCloud className="h-8 w-8" />
                                             </div>
                                             <p className="text-xs font-bold text-gray-400 uppercase tracking-widest italic text-center">
@@ -211,7 +211,7 @@ const UploadMaterial = () => {
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
                                     placeholder="Provide a detailed description of the material..."
-                                    className="w-full px-6 py-5 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 font-bold placeholder:text-gray-200 focus:outline-none focus:border-amber-600 focus:bg-white transition-all min-h-[140px] resize-none shadow-inner"
+                                    className="w-full px-6 py-5 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 dark:text-white font-bold placeholder:text-gray-200 focus:outline-none focus:border-amber-600 focus:bg-white transition-all min-h-[140px] resize-none shadow-inner"
                                     required
                                     disabled={uploading}
                                 />
@@ -224,7 +224,7 @@ const UploadMaterial = () => {
                         <button
                             type="button"
                             onClick={() => navigate('/teacher/manage-materials')}
-                            className="flex-1 py-5 bg-white text-gray-900 font-black rounded-2xl border-2 border-gray-100 hover:bg-gray-50 hover:border-gray-200 transition-all flex items-center justify-center gap-3 group"
+                            className="flex-1 py-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-black rounded-2xl border-2 border-gray-100 dark:border-gray-800 hover:bg-gray-50 hover:border-gray-200 transition-all flex items-center justify-center gap-3 group"
                             disabled={uploading}
                         >
                             <X className="h-5 w-5 group-hover:rotate-90 transition-transform" />

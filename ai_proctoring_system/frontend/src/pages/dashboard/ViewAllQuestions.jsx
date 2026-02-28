@@ -74,15 +74,15 @@ const ViewAllQuestions = () => {
 
     return (
         <div className="min-h-screen bg-[#FFFBF0] flex flex-col">
-            <header className="bg-white border-b border-orange-100 px-8 py-6 sticky top-0 z-50 shadow-sm">
+            <header className="bg-white dark:bg-gray-900 border-b border-orange-100 px-8 py-6 sticky top-0 z-50 shadow-sm">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
                         <Link to="/teacher/manage-questions" className="p-2 hover:bg-orange-50 rounded-full transition-colors font-bold">
                             <ChevronLeft className="h-6 w-6 text-amber-600" />
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-black text-gray-900 tracking-tight">Question Repository</h1>
-                            <p className="text-sm text-gray-500 font-medium">Browse and manage all your assessment questions</p>
+                            <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Question Repository</h1>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Browse and manage all your assessment questions</p>
                         </div>
                     </div>
 
@@ -112,12 +112,12 @@ const ViewAllQuestions = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center h-64 gap-4">
                         <Loader2 className="h-10 w-10 text-amber-500 animate-spin" />
-                        <p className="text-gray-500 font-bold animate-pulse">Scanning question bank...</p>
+                        <p className="text-gray-500 dark:text-gray-400 font-bold animate-pulse">Scanning question bank...</p>
                     </div>
                 ) : filteredQuestions.length > 0 ? (
                     <div className="grid grid-cols-1 gap-6">
                         {filteredQuestions.map((q) => (
-                            <div key={q.id} className="bg-white p-8 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
+                            <div key={q.id} className="bg-white dark:bg-gray-900 p-8 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 group relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50/50 rounded-bl-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
 
                                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 relative z-10">
@@ -133,7 +133,7 @@ const ViewAllQuestions = () => {
                                             </div>
                                         </div>
 
-                                        <h3 className="text-xl font-black text-gray-900 mb-6 leading-tight group-hover:text-amber-600 transition-colors">
+                                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-6 leading-tight group-hover:text-amber-600 transition-colors">
                                             {q.text}
                                         </h3>
 
@@ -142,7 +142,7 @@ const ViewAllQuestions = () => {
                                                 const label = String.fromCharCode(65 + idx)
                                                 const isCorrect = opt === q.correct_option
                                                 return (
-                                                    <div key={idx} className={`p-4 rounded-xl border text-sm font-bold flex items-center gap-3 ${isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-gray-50 border-gray-100 text-gray-600'}`}>
+                                                    <div key={idx} className={`p-4 rounded-xl border text-sm font-bold flex items-center gap-3 ${isCorrect ? 'bg-emerald-50 border-emerald-200 text-emerald-800' : 'bg-gray-50 dark:bg-gray-950 border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-300'}`}>
                                                         <span className={`h-6 w-6 rounded-lg flex items-center justify-center text-xs font-black ${isCorrect ? 'bg-emerald-600 text-white' : 'bg-gray-200 text-gray-400'}`}>
                                                             {label}
                                                         </span>
@@ -167,12 +167,12 @@ const ViewAllQuestions = () => {
                         ))}
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
+                    <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-[40px] border border-dashed border-gray-200 dark:border-gray-700">
                         <div className="h-20 w-20 bg-amber-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-amber-200">
                             <Sparkles className="h-10 w-10" />
                         </div>
-                        <h2 className="text-2xl font-black text-gray-900 mb-2">No questions found</h2>
-                        <p className="text-gray-500 font-medium mb-8">Your question bank is empty. Start building your repository!</p>
+                        <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">No questions found</h2>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium mb-8">Your question bank is empty. Start building your repository!</p>
                         <button
                             onClick={() => navigate('/teacher/create-question')}
                             className="px-8 py-3 bg-[#1A1612] text-white font-black rounded-2xl shadow-lg shadow-orange-950/20 hover:bg-black transition-all"

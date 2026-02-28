@@ -82,14 +82,14 @@ const CreateBlogPost = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
             {/* Minimal Header */}
-            <header className="bg-white border-b border-gray-200 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
+            <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-8 py-4 flex items-center justify-between sticky top-0 z-50">
                 <div className="flex items-center gap-4">
                     <Link to="/teacher/blog-management" className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <ChevronLeft className="h-6 w-6 text-gray-600" />
+                        <ChevronLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                     </Link>
-                    <h1 className="text-xl font-bold text-gray-900 tracking-tight">Create Blog Post</h1>
+                    <h1 className="text-xl font-bold text-gray-900 dark:text-white tracking-tight">Create Blog Post</h1>
                 </div>
                 <div className="flex items-center gap-3">
                     <button
@@ -112,7 +112,7 @@ const CreateBlogPost = () => {
             <main className="flex-1 max-w-4xl mx-auto w-full p-8">
                 {/* Intro Section */}
                 <div className="mb-10 text-center">
-                    <p className="text-gray-500 font-medium mb-4">
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mb-4">
                         Share your knowledge and insights with students through engaging blog content
                     </p>
 
@@ -128,12 +128,12 @@ const CreateBlogPost = () => {
                 </div>
 
                 {/* Form Section */}
-                <div className="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm">
+                <div className="bg-white dark:bg-gray-900 p-8 rounded-3xl border border-gray-200 dark:border-gray-700 shadow-sm">
                     <div className="mb-6">
-                        <h2 className="text-xs font-black text-gray-400 border-b border-gray-100 pb-2 uppercase tracking-widest mb-1">
+                        <h2 className="text-xs font-black text-gray-400 border-b border-gray-100 dark:border-gray-800 pb-2 uppercase tracking-widest mb-1">
                             Blog Post Information
                         </h2>
-                        <p className="text-sm text-gray-500 font-medium">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                             Fill in the details for your new blog post
                         </p>
                     </div>
@@ -150,7 +150,7 @@ const CreateBlogPost = () => {
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder="Enter a captivating title..."
-                                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900"
+                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900 dark:text-white"
                             />
                         </div>
 
@@ -162,17 +162,17 @@ const CreateBlogPost = () => {
                             </label>
                             <div
                                 className={`relative group cursor-pointer border-2 border-dashed rounded-3xl transition-all h-60 flex items-center justify-center overflow-hidden
-                                    ${imagePreview ? 'border-emerald-500' : 'border-gray-300 hover:border-emerald-400 bg-gray-50'}`}
+                                    ${imagePreview ? 'border-emerald-500' : 'border-gray-300 hover:border-emerald-400 bg-gray-50 dark:bg-gray-950'}`}
                                 onClick={() => document.getElementById('image-upload').click()}
                             >
                                 {imagePreview ? (
                                     <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                                 ) : (
                                     <div className="text-center">
-                                        <div className="h-12 w-12 bg-white rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-3 text-gray-400 group-hover:text-emerald-500 transition-colors">
+                                        <div className="h-12 w-12 bg-white dark:bg-gray-900 rounded-2xl shadow-sm flex items-center justify-center mx-auto mb-3 text-gray-400 group-hover:text-emerald-500 transition-colors">
                                             <Upload className="h-6 w-6" />
                                         </div>
-                                        <p className="text-sm font-bold text-gray-500">Click to upload image</p>
+                                        <p className="text-sm font-bold text-gray-500 dark:text-gray-400">Click to upload image</p>
                                         <p className="text-xs text-gray-400 mt-1 uppercase tracking-widest">JPG, PNG, WEBP</p>
                                     </div>
                                 )}
@@ -205,7 +205,7 @@ const CreateBlogPost = () => {
                                 onChange={(e) => setContent(e.target.value)}
                                 placeholder="Write your knowledge and insights here..."
                                 rows={12}
-                                className="w-full px-5 py-4 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900 leading-relaxed"
+                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all font-medium text-gray-900 dark:text-white leading-relaxed"
                             />
                         </div>
                     </form>

@@ -14,13 +14,13 @@ const StudentWelcome = () => {
     const navigate = useNavigate()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#FFFBF0] via-[#FFF5E6] to-[#FFF0D9] flex flex-col items-center justify-center p-6 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-[#FFFBF0] via-[#FFF5E6] to-[#FFF0D9] flex flex-col items-center justify-center p-6 relative overflow-hidden student-theme">
             {/* Background Elements */}
             <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-orange-100/50 rounded-full blur-[100px] -mr-64 -mt-64 animate-pulse"></div>
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-amber-100/50 rounded-full blur-[100px] -ml-40 -mb-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
 
             {/* Back Arrow */}
-            <Link to="/" className="absolute top-10 left-10 p-4 bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all group flex items-center gap-2 text-gray-900 border border-orange-50 font-black text-xs uppercase tracking-widest">
+            <Link to="/" className="absolute top-10 left-10 p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl hover:shadow-2xl transition-all group flex items-center gap-2 text-gray-900 dark:text-white border border-orange-50 font-black text-xs uppercase tracking-widest">
                 <div className="h-6 w-6 bg-orange-500 rounded-lg flex items-center justify-center text-white group-hover:-translate-x-1 transition-transform">
                     <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M15 19l-7-7 7-7" /></svg>
                 </div>
@@ -38,13 +38,13 @@ const StudentWelcome = () => {
                     <ShieldCheck className="h-3 w-3 text-amber-500" />
                     Student Portal
                 </span>
-                <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-2 leading-[1.1] tracking-tight">
+                <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white mb-2 leading-[1.1] tracking-tight">
                     Hello Students
                 </h1>
                 <p className="text-xl md:text-2xl font-bold text-amber-600 mb-8">
                     Welcome to AI Proctoring System
                 </p>
-                <p className="text-lg md:text-xl text-gray-500 font-medium max-w-2xl mx-auto mb-12 leading-relaxed">
+                <p className="text-lg md:text-xl text-gray-500 dark:text-gray-400 font-medium max-w-2xl mx-auto mb-12 leading-relaxed">
                     Access your courses, take examinations, and track your academic progress—all in one place.
                 </p>
 
@@ -64,7 +64,7 @@ const StudentWelcome = () => {
 
                     <Link
                         to="/student/login"
-                        className="group relative px-10 py-6 bg-white text-gray-900 font-black rounded-2xl shadow-xl border-b-4 border-orange-100 hover:shadow-2xl hover:-translate-y-1 transition-all hover:bg-amber-50"
+                        className="group relative px-10 py-6 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-black rounded-2xl shadow-xl border-b-4 border-orange-100 hover:shadow-2xl hover:-translate-y-1 transition-all hover:bg-amber-50"
                     >
                         <div className="flex items-center gap-3 font-black uppercase tracking-tight">
                             <LogIn className="h-6 w-6 text-orange-600 group-hover:scale-110 transition-transform" />
@@ -75,21 +75,21 @@ const StudentWelcome = () => {
 
                 {/* Info Boxes */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mb-16 px-4">
-                    <div className="bg-white p-8 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div className="bg-white dark:bg-gray-900 p-8 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
                         <div className="h-12 w-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 group-hover:bg-amber-600 group-hover:text-white transition-all">
                             <BookOpen className="h-6 w-6" />
                         </div>
-                        <h3 className="text-xl font-black text-gray-900 mb-2 font-display">Course Access</h3>
+                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 font-display">Course Access</h3>
                         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest leading-relaxed italic">
                             browse through your enrolled courses and view uploaded study materials from teachers
                         </p>
                     </div>
 
-                    <div className="bg-white p-8 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
+                    <div className="bg-white dark:bg-gray-900 p-8 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all duration-300 group">
                         <div className="h-12 w-12 rounded-2xl bg-orange-50 text-orange-600 flex items-center justify-center mb-6 group-hover:bg-orange-600 group-hover:text-white transition-all">
                             <PlayCircle className="h-6 w-6" />
                         </div>
-                        <h3 className="text-xl font-black text-gray-900 mb-2 font-display">Take Exam</h3>
+                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 font-display">Take Exam</h3>
                         <p className="text-sm font-bold text-gray-400 uppercase tracking-widest leading-relaxed italic">
                             securely take your online examinations with real-time AI proctoring and monitoring
                         </p>

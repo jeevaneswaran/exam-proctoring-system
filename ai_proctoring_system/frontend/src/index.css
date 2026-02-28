@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
-  --font-display: 'Outfit', sans-serif;
+  --font-display: 'Urbanist', sans-serif;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
   --color-brand-red: #E63946;
   --color-brand-orange: #F59E0B;
   --color-brand-yellow: #FBBF24;
@@ -15,6 +18,120 @@
   --animate-bounce-slow: bounce-slow 3s ease-in-out infinite;
   --animate-pulse-slow: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   --animate-neural-flow: neural-flow 20s linear infinite;
+}
+
+@layer base {
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: #f8fafc;
+    color: var(--color-brand-black);
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Urbanist', sans-serif;
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
+  .glass {
+    background-color: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-dark {
+    background-color: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .text-glow-orange {
+    text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+  }
+
+  .text-glow-cyber {
+    text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+  }
+
+  .neural-grid {
+    background-image:
+      radial-gradient(circle at 2px 2px, rgba(0, 242, 255, 0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+
+  .cyber-border {
+    position: relative;
+    border: 1px solid rgba(0, 242, 255, 0.1);
+  }
+
+  .cyber-border::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.3), transparent);
+    background-size: 200% 100%;
+    animation: border-flow 3s linear infinite;
+    pointer-events: none;
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+  }
+
+  .student-theme {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+  }
+
+  .student-theme h1,
+  .student-theme h2,
+  .student-theme h3,
+  .student-theme h4,
+  .student-theme h5,
+  .student-theme h6 {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
+  }
+
+  /* Make sure any component explicitly saying font-stylish uses Outfit */
+  .font-stylish {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .font-moderate {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.6;
+  }
+}
+
+/* Keyframes */
+@keyframes border-flow {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @keyframes neural-flow {
@@ -51,82 +168,6 @@
   }
 }
 
-/* Base Styles */
-@layer base {
-  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
-
-  body {
-    font-family: var(--font-display);
-    background-color: #f8fafc;
-    color: var(--color-brand-black);
-  }
-}
-
-/* Utilities */
-@layer utilities {
-  .perspective-1000 {
-    perspective: 1000px;
-  }
-
-  .animation-delay-200 {
-    animation-delay: 200ms;
-  }
-
-  .animation-delay-400 {
-    animation-delay: 400ms;
-  }
-
-  .glass {
-    @apply bg-white/10 backdrop-blur-md border border-white/20;
-  }
-
-  .glass-dark {
-    @apply bg-black/40 backdrop-blur-lg border border-white/5;
-  }
-
-  .text-glow-orange {
-    text-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
-  }
-
-  .text-glow-cyber {
-    text-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
-  }
-
-  .neural-grid {
-    background-image:
-      radial-gradient(circle at 2px 2px, rgba(0, 242, 255, 0.05) 1px, transparent 0);
-    background-size: 40px 40px;
-  }
-
-  .cyber-border {
-    position: relative;
-    border: 1px solid rgba(0, 242, 255, 0.1);
-  }
-
-  .cyber-border::after {
-    content: '';
-    position: absolute;
-    inset: -1px;
-    background: linear-gradient(90deg, transparent, rgba(0, 242, 255, 0.3), transparent);
-    background-size: 200% 100%;
-    animation: border-flow 3s linear infinite;
-    pointer-events: none;
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    mask-composite: exclude;
-  }
-
-  @keyframes border-flow {
-    0% {
-      background-position: 200% 0;
-    }
-
-    100% {
-      background-position: -200% 0;
-    }
-  }
-}
-
-/* Keyframes */
 @keyframes float {
   0% {
     transform: translateY(0px);
@@ -179,4 +220,105 @@
 
 .animate-slide-up {
   animation: slide-up 0.8s ease-out forwards;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+@keyframes bounce-in {
+  0% {
+    transform: scale(0.3);
+    opacity: 0;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+
+  70% {
+    transform: scale(0.9);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+
+@keyframes bubble-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.5);
+    opacity: 0.5;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.bubble-pulse {
+  animation: bubble-pulse 2s ease-in-out infinite;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.custom-scrollbar-dark::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }

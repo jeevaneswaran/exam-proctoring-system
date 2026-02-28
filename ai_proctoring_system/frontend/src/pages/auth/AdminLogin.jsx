@@ -10,7 +10,7 @@ const AdminLogin = () => {
         return (
             <div>
                 <div className="absolute top-4 left-4 z-10">
-                    <button onClick={() => setMode(null)} className="text-gray-600 hover:text-brand-black flex items-center gap-2">
+                    <button onClick={() => setMode(null)} className="text-gray-600 dark:text-gray-300 hover:text-brand-black flex items-center gap-2">
                         &larr; Back
                     </button>
                 </div>
@@ -36,7 +36,7 @@ const AdminLogin = () => {
 
             {/* Back to Home */}
             <div className="absolute top-4 left-4 z-10">
-                <Link to="/" className="text-gray-500 hover:text-brand-black flex items-center gap-2 transition-colors font-medium">
+                <Link to="/" className="text-gray-500 dark:text-gray-400 hover:text-brand-black flex items-center gap-2 transition-colors font-medium">
                     &larr; Back to Home
                 </Link>
             </div>
@@ -49,7 +49,7 @@ const AdminLogin = () => {
                 </div>
 
                 {/* Greeting */}
-                <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight leading-tight">
+                <h1 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tight leading-tight">
                     Hello Admin 🛡️
                 </h1>
 
@@ -58,7 +58,7 @@ const AdminLogin = () => {
                     <p className="text-sm font-black text-blue-700 leading-relaxed uppercase tracking-[0.3em] mb-4">
                         System Configuration & Oversight
                     </p>
-                    <p className="text-base text-gray-600 font-medium leading-relaxed">
+                    <p className="text-base text-gray-600 dark:text-gray-300 font-medium leading-relaxed">
                         Control the core parameters of the AI Proctoring ecosystem. Manage user approvals, monitor system integrity, and ensure the highest standards of examination security across the entire enterprise.
                     </p>
                 </div>
@@ -75,7 +75,7 @@ const AdminLogin = () => {
 
                     <button
                         onClick={() => setMode('login')}
-                        className="group flex items-center gap-3 px-10 py-5 bg-white text-gray-900 font-black rounded-2xl shadow-lg border-2 border-gray-100 hover:border-blue-600 hover:text-blue-600 hover:-translate-y-1 transition-all duration-300 text-lg w-full sm:w-auto justify-center"
+                        className="group flex items-center gap-3 px-10 py-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-black rounded-2xl shadow-lg border-2 border-gray-100 dark:border-gray-800 hover:border-blue-600 hover:text-blue-600 hover:-translate-y-1 transition-all duration-300 text-lg w-full sm:w-auto justify-center"
                     >
                         <LogIn className="h-6 w-6 group-hover:scale-110 transition-transform text-blue-600" />
                         Login Now

@@ -5,6 +5,11 @@ const TeacherPendingApproval = () => {
     const { user, signOut } = useAuth()
     const userName = user?.user_metadata?.first_name || user?.email?.split('@')[0] || 'Teacher'
 
+    // Poll for approval status every 10 seconds or when requested
+    const checkStatus = () => {
+        window.location.reload()
+    }
+
     const handleSignOut = async () => {
         await signOut()
     }
@@ -13,7 +18,7 @@ const TeacherPendingApproval = () => {
         <div className="min-h-screen bg-gradient-to-br from-[#FFFBF0] via-[#FFF5E6] to-[#FFF0D9] flex items-center justify-center p-4">
             <div className="w-full max-w-2xl">
                 {/* Main Card */}
-                <div className="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+                <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-amber-500 to-orange-500 p-8 text-center text-white">
                         <div className="mx-auto h-20 w-20 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center mb-4">
@@ -27,7 +32,7 @@ const TeacherPendingApproval = () => {
 
                     {/* Pending Approval Button (UA Design) */}
                     <div className="flex justify-center -mt-6">
-                        <div className="px-8 py-4 bg-white rounded-2xl shadow-xl border border-amber-100 flex items-center gap-3">
+                        <div className="px-8 py-4 bg-white dark:bg-gray-900 rounded-2xl shadow-xl border border-amber-100 flex items-center gap-3">
                             <div className="h-4 w-4 bg-amber-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(245,158,11,0.5)]"></div>
                             <span className="text-amber-800 font-bold uppercase tracking-widest text-xs">
                                 Pending Approval Button
@@ -37,10 +42,10 @@ const TeacherPendingApproval = () => {
 
                     {/* Content */}
                     <div className="p-8 text-center">
-                        <h2 className="text-xl font-bold text-gray-900 mb-2">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
                             Your account has not been activated yet.
                         </h2>
-                        <p className="text-gray-500 mb-8 leading-relaxed max-w-md mx-auto">
+                        <p className="text-gray-500 dark:text-gray-400 mb-8 leading-relaxed max-w-md mx-auto">
                             We are waiting for the approval from the administrator.
                             You will be able to access your account soon after approval.
                         </p>
@@ -80,14 +85,23 @@ const TeacherPendingApproval = () => {
                             </div>
                         </div>
 
-                        {/* Sign Out */}
-                        <button
-                            onClick={handleSignOut}
-                            className="inline-flex items-center gap-2 px-6 py-3 text-gray-500 hover:text-red-600 font-medium rounded-xl hover:bg-red-50 transition-all"
-                        >
-                            <LogOut className="h-4 w-4" />
-                            Sign Out
-                        </button>
+                        {/* Actions */}
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                            <button
+                                onClick={checkStatus}
+                                className="inline-flex items-center gap-2 px-8 py-3 bg-amber-600 text-white font-bold rounded-xl hover:bg-amber-700 transition-all shadow-lg shadow-amber-900/10"
+                            >
+                                <ClipboardCheck className="h-5 w-5" />
+                                I'm Approved, Let Me In!
+                            </button>
+                            <button
+                                onClick={handleSignOut}
+                                className="inline-flex items-center gap-2 px-6 py-3 text-gray-500 dark:text-gray-400 hover:text-red-600 font-medium rounded-xl hover:bg-red-50 transition-all"
+                            >
+                                <LogOut className="h-4 w-4" />
+                                Sign Out
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

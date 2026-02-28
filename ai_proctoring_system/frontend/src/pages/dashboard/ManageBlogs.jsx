@@ -67,16 +67,16 @@ const ManageBlogs = () => {
     )
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
-            <header className="bg-white border-b border-gray-200 px-8 py-6 sticky top-0 z-50 shadow-sm">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-950 flex flex-col">
+            <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-8 py-6 sticky top-0 z-50 shadow-sm">
                 <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="flex items-center gap-4">
                         <Link to="/teacher/blog-management" className="p-2 hover:bg-gray-100 rounded-full transition-colors font-bold">
-                            <ChevronLeft className="h-6 w-6 text-gray-600" />
+                            <ChevronLeft className="h-6 w-6 text-gray-600 dark:text-gray-300" />
                         </Link>
                         <div>
-                            <h1 className="text-2xl font-black text-gray-900 tracking-tight">Your Published Blogs</h1>
-                            <p className="text-sm text-gray-500 font-medium">Manage and monitor all your blog posts</p>
+                            <h1 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Your Published Blogs</h1>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">Manage and monitor all your blog posts</p>
                         </div>
                     </div>
 
@@ -88,7 +88,7 @@ const ManageBlogs = () => {
                                 placeholder="Search your blogs..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-12 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium"
+                                className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-2xl focus:ring-2 focus:ring-emerald-500 outline-none transition-all font-medium"
                             />
                         </div>
                         <button
@@ -106,12 +106,12 @@ const ManageBlogs = () => {
                 {loading ? (
                     <div className="flex flex-col items-center justify-center h-64 gap-4">
                         <Loader2 className="h-10 w-10 text-emerald-500 animate-spin" />
-                        <p className="text-gray-500 font-bold animate-pulse">Loading your articles...</p>
+                        <p className="text-gray-500 dark:text-gray-400 font-bold animate-pulse">Loading your articles...</p>
                     </div>
                 ) : filteredBlogs.length > 0 ? (
-                    <div className="overflow-hidden bg-white border border-gray-100 rounded-[32px] shadow-xl">
+                    <div className="overflow-hidden bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-[32px] shadow-xl">
                         <table className="w-full text-left">
-                            <thead className="bg-gray-50 border-b border-gray-100">
+                            <thead className="bg-gray-50 dark:bg-gray-950 border-b border-gray-100 dark:border-gray-800">
                                 <tr>
                                     <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Blog Detail</th>
                                     <th className="px-8 py-5 text-xs font-black text-gray-400 uppercase tracking-widest">Publish Date</th>
@@ -123,7 +123,7 @@ const ManageBlogs = () => {
                                     <tr key={blog.id} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="h-16 w-24 bg-gray-100 rounded-xl overflow-hidden shrink-0 border border-gray-100">
+                                                <div className="h-16 w-24 bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden shrink-0 border border-gray-100 dark:border-gray-800">
                                                     {blog.image_url ? (
                                                         <img src={blog.image_url} alt="" className="w-full h-full object-cover" />
                                                     ) : (
@@ -133,7 +133,7 @@ const ManageBlogs = () => {
                                                     )}
                                                 </div>
                                                 <div>
-                                                    <p className="text-lg font-black text-gray-900 tracking-tight line-clamp-1 group-hover:text-emerald-600 transition-colors">{blog.title}</p>
+                                                    <p className="text-lg font-black text-gray-900 dark:text-white tracking-tight line-clamp-1 group-hover:text-emerald-600 transition-colors">{blog.title}</p>
                                                     <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">
                                                         {blog.content.substring(0, 50)}...
                                                     </p>
@@ -141,7 +141,7 @@ const ManageBlogs = () => {
                                             </div>
                                         </td>
                                         <td className="px-8 py-6">
-                                            <div className="flex items-center gap-2 text-sm font-bold text-gray-600">
+                                            <div className="flex items-center gap-2 text-sm font-bold text-gray-600 dark:text-gray-300">
                                                 <Calendar className="h-4 w-4 text-emerald-500" />
                                                 {new Date(blog.created_at).toLocaleDateString(undefined, {
                                                     year: 'numeric',
@@ -174,12 +174,12 @@ const ManageBlogs = () => {
                         </table>
                     </div>
                 ) : (
-                    <div className="text-center py-20 bg-white rounded-[40px] border border-dashed border-gray-200">
+                    <div className="text-center py-20 bg-white dark:bg-gray-900 rounded-[40px] border border-dashed border-gray-200 dark:border-gray-700">
                         <div className="h-20 w-20 bg-emerald-50 rounded-3xl flex items-center justify-center mx-auto mb-6 text-emerald-200">
                             <Sparkles className="h-10 w-10" />
                         </div>
-                        <h2 className="text-2xl font-black text-gray-900 mb-2">No blogs uploaded yet</h2>
-                        <p className="text-gray-500 font-medium mb-8">Start sharing your insights with your students today!</p>
+                        <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">No blogs uploaded yet</h2>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium mb-8">Start sharing your insights with your students today!</p>
                         <button
                             onClick={() => navigate('/teacher/create-blog')}
                             className="px-8 py-3 bg-emerald-600 text-white font-black rounded-2xl shadow-lg shadow-emerald-600/20 hover:bg-emerald-700 transition-all font-bold"

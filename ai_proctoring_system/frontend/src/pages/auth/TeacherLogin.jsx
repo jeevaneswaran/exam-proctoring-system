@@ -11,7 +11,7 @@ const TeacherLogin = () => {
         return (
             <div>
                 <div className="absolute top-4 left-4 z-10">
-                    <button onClick={() => setMode(null)} className="text-gray-600 hover:text-brand-black flex items-center gap-2">
+                    <button onClick={() => setMode(null)} className="text-gray-600 dark:text-gray-300 hover:text-brand-black flex items-center gap-2">
                         &larr; Back
                     </button>
                 </div>
@@ -28,7 +28,7 @@ const TeacherLogin = () => {
         return (
             <div>
                 <div className="absolute top-4 left-4 z-10">
-                    <button onClick={() => setMode(null)} className="text-gray-600 hover:text-brand-black flex items-center gap-2">
+                    <button onClick={() => setMode(null)} className="text-gray-600 dark:text-gray-300 hover:text-brand-black flex items-center gap-2">
                         &larr; Back
                     </button>
                 </div>
@@ -53,7 +53,7 @@ const TeacherLogin = () => {
 
             {/* Back to Home */}
             <div className="absolute top-4 left-4 z-10">
-                <Link to="/" className="text-gray-500 hover:text-brand-black flex items-center gap-2 transition-colors font-medium">
+                <Link to="/" className="text-gray-500 dark:text-gray-400 hover:text-brand-black flex items-center gap-2 transition-colors font-medium">
                     &larr; Back to Home
                 </Link>
             </div>
@@ -66,16 +66,16 @@ const TeacherLogin = () => {
                 </div>
 
                 {/* Greeting */}
-                <h1 className="text-5xl md:text-6xl font-black text-gray-900 mb-6 tracking-tight">
+                <h1 className="text-5xl md:text-6xl font-black text-gray-900 dark:text-white mb-6 tracking-tight">
                     Hello Teacher 👋
                 </h1>
 
                 {/* Description */}
                 <div className="max-w-xl mx-auto mb-12">
-                    <p className="text-sm font-medium text-gray-500 leading-relaxed uppercase tracking-widest mb-4">
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 leading-relaxed uppercase tracking-widest mb-4">
                         Welcome to the AI Proctoring & Examination Management System
                     </p>
-                    <p className="text-base text-gray-600 leading-relaxed">
+                    <p className="text-base text-gray-600 dark:text-gray-300 leading-relaxed">
                         Design, manage, and deliver secure online examinations with AI-powered monitoring Create courses, build assessments, upload learning materials, and support student success — all from one intelligent platform.
                     </p>
                 </div>
@@ -92,7 +92,7 @@ const TeacherLogin = () => {
 
                     <button
                         onClick={() => setMode('login')}
-                        className="group flex items-center gap-3 px-10 py-5 bg-white text-gray-900 font-bold rounded-2xl shadow-lg border-2 border-gray-100 hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-1 transition-all duration-300 text-lg w-full sm:w-auto justify-center"
+                        className="group flex items-center gap-3 px-10 py-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-bold rounded-2xl shadow-lg border-2 border-gray-100 dark:border-gray-800 hover:border-indigo-600 hover:text-indigo-600 hover:-translate-y-1 transition-all duration-300 text-lg w-full sm:w-auto justify-center"
                     >
                         <LogIn className="h-6 w-6 group-hover:scale-110 transition-transform" />
                         Login Now

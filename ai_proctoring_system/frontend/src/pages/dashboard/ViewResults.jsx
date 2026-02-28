@@ -143,14 +143,14 @@ const ViewResults = () => {
 
             {/* Main Content */}
             <main className="flex-1 overflow-y-auto custom-scrollbar">
-                <header className="bg-white border-b border-gray-100 px-12 py-8 sticky top-0 z-50">
+                <header className="bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 px-12 py-8 sticky top-0 z-50">
                     <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-8">
                         <div>
                             <div className="flex items-center gap-3 mb-2 font-black text-amber-600 uppercase tracking-widest text-[10px]">
                                 <span className="h-1 w-8 bg-amber-600 rounded-full"></span>
                                 Performance Hub
                             </div>
-                            <h1 className="text-4xl font-black text-gray-900 tracking-tight">Student Success Center</h1>
+                            <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight">Student Success Center</h1>
                         </div>
 
                         <div className="relative w-full md:w-96">
@@ -160,7 +160,7 @@ const ViewResults = () => {
                                 placeholder="Search students or exams..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="w-full pl-14 pr-6 py-4 bg-gray-50 border-2 border-transparent focus:border-amber-500 rounded-[24px] outline-none transition-all font-bold text-gray-700"
+                                className="w-full pl-14 pr-6 py-4 bg-gray-50 dark:bg-gray-950 border-2 border-transparent focus:border-amber-500 rounded-[24px] outline-none transition-all font-bold text-gray-700"
                             />
                         </div>
                     </div>
@@ -188,8 +188,8 @@ const ViewResults = () => {
                     {/* Charts Section */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         {/* Score Distribution */}
-                        <div className="bg-white p-8 rounded-[40px] border border-gray-100 shadow-sm">
-                            <h3 className="text-lg font-black text-gray-900 mb-8 flex items-center gap-2">
+                        <div className="bg-white dark:bg-gray-900 p-8 rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-sm">
+                            <h3 className="text-lg font-black text-gray-900 dark:text-white mb-8 flex items-center gap-2">
                                 <BarChart3 className="h-5 w-5 text-amber-500" />
                                 Score Distribution
                             </h3>
@@ -238,9 +238,9 @@ const ViewResults = () => {
                     </div>
 
                     {/* Detailed Data Table */}
-                    <div className="bg-white rounded-[40px] border border-gray-100 shadow-sm overflow-hidden">
+                    <div className="bg-white dark:bg-gray-900 rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden">
                         <div className="px-10 py-8 border-b border-gray-50 flex items-center justify-between">
-                            <h3 className="text-lg font-black text-gray-900">Rankings & Transcripts</h3>
+                            <h3 className="text-lg font-black text-gray-900 dark:text-white">Rankings & Transcripts</h3>
                         </div>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
@@ -258,11 +258,11 @@ const ViewResults = () => {
                                         <tr key={r.id} className="group hover:bg-gray-50/80 transition-all">
                                             <td className="px-10 py-6">
                                                 <div className="flex items-center gap-4">
-                                                    <div className="h-10 w-10 rounded-xl bg-gray-100 flex items-center justify-center font-black text-gray-400 text-sm">
+                                                    <div className="h-10 w-10 rounded-xl bg-gray-100 dark:bg-gray-800 flex items-center justify-center font-black text-gray-400 text-sm">
                                                         {r.profiles.email[0].toUpperCase()}
                                                     </div>
                                                     <div>
-                                                        <p className="font-black text-gray-900 leading-tight">{r.profiles.email.split('@')[0]}</p>
+                                                        <p className="font-black text-gray-900 dark:text-white leading-tight">{r.profiles.email.split('@')[0]}</p>
                                                         <p className="text-[10px] font-bold text-gray-400 uppercase">{r.profiles.email}</p>
                                                     </div>
                                                 </div>
@@ -285,13 +285,13 @@ const ViewResults = () => {
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td className="px-10 py-6 text-sm font-bold text-gray-500">
+                                            <td className="px-10 py-6 text-sm font-bold text-gray-500 dark:text-gray-400">
                                                 {new Date(r.submitted_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                                             </td>
                                             <td className="px-10 py-6 text-right">
                                                 <button
                                                     onClick={() => setSelectedStudent(r)}
-                                                    className="p-3 bg-white border border-gray-100 rounded-xl text-gray-400 hover:text-amber-600 hover:border-amber-200 transition-all opacity-0 group-hover:opacity-100"
+                                                    className="p-3 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl text-gray-400 hover:text-amber-600 hover:border-amber-200 transition-all opacity-0 group-hover:opacity-100"
                                                 >
                                                     <ArrowUpRight className="h-4 w-4" />
                                                 </button>
@@ -308,10 +308,10 @@ const ViewResults = () => {
             {/* Student Detail Modal */}
             {selectedStudent && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-[#1A1612]/80 backdrop-blur-md animate-fade-in">
-                    <div className="bg-white w-full max-w-2xl rounded-[50px] overflow-hidden shadow-2xl relative animate-slide-up">
+                    <div className="bg-white dark:bg-gray-900 w-full max-w-2xl rounded-[50px] overflow-hidden shadow-2xl relative animate-slide-up">
                         <button
                             onClick={() => setSelectedStudent(null)}
-                            className="absolute top-8 right-8 p-3 bg-gray-50 hover:bg-gray-100 rounded-2xl text-gray-400 transition-all z-10"
+                            className="absolute top-8 right-8 p-3 bg-gray-50 dark:bg-gray-950 hover:bg-gray-100 rounded-2xl text-gray-400 transition-all z-10"
                         >
                             <X className="h-5 w-5" />
                         </button>
@@ -322,16 +322,16 @@ const ViewResults = () => {
                                     {selectedStudent.profiles.email[0].toUpperCase()}
                                 </div>
                                 <div>
-                                    <h2 className="text-3xl font-black text-gray-900 mb-1">{selectedStudent.profiles.email.split('@')[0]}</h2>
+                                    <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-1">{selectedStudent.profiles.email.split('@')[0]}</h2>
                                     <p className="font-bold text-amber-600 uppercase tracking-widest text-xs">Academic Transcript</p>
                                 </div>
                             </div>
 
                             <div className="grid grid-cols-2 gap-8 mb-12">
-                                <div className="p-8 bg-gray-50 rounded-[40px] border border-gray-100">
+                                <div className="p-8 bg-gray-50 dark:bg-gray-950 rounded-[40px] border border-gray-100 dark:border-gray-800">
                                     <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Exam Particulars</p>
-                                    <h4 className="text-xl font-black text-gray-900 mb-2">{selectedStudent.exams.title}</h4>
-                                    <div className="flex items-center gap-2 text-sm text-gray-500 font-bold">
+                                    <h4 className="text-xl font-black text-gray-900 dark:text-white mb-2">{selectedStudent.exams.title}</h4>
+                                    <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 font-bold">
                                         <Calendar className="h-4 w-4" />
                                         Completed on {new Date(selectedStudent.submitted_at).toLocaleDateString()}
                                     </div>
@@ -344,7 +344,7 @@ const ViewResults = () => {
                                     </div>
                                     <div className="mt-4 flex items-center gap-2 font-bold text-sm">
                                         <div className="h-2 flex-1 bg-white/20 rounded-full overflow-hidden">
-                                            <div className="h-full bg-white" style={{ width: `${selectedStudent.score}%` }}></div>
+                                            <div className="h-full bg-white dark:bg-gray-900" style={{ width: `${selectedStudent.score}%` }}></div>
                                         </div>
                                     </div>
                                 </div>
@@ -352,7 +352,7 @@ const ViewResults = () => {
 
                             <div className="flex gap-4">
                                 <button className="flex-1 py-5 bg-[#1A1612] text-white font-black rounded-[24px] hover:bg-black transition-all">Download Report</button>
-                                <button onClick={() => setSelectedStudent(null)} className="flex-1 py-5 bg-gray-100 text-gray-500 font-black rounded-[24px] hover:bg-gray-200 transition-all">Close</button>
+                                <button onClick={() => setSelectedStudent(null)} className="flex-1 py-5 bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-black rounded-[24px] hover:bg-gray-200 transition-all">Close</button>
                             </div>
                         </div>
                     </div>

@@ -42,7 +42,7 @@ const BlogManagement = () => {
                         <span className="h-1 w-8 bg-emerald-600 rounded-full"></span>
                         Content Creator
                     </div>
-                    <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">Blog Management</h1>
+                    <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Blog Management</h1>
                     <p className="text-sm font-medium text-gray-400 lowercase tracking-wider leading-relaxed">
                         great engaging blog posts to share knowledge and insights with your students
                     </p>
@@ -65,10 +65,10 @@ const BlogManagement = () => {
                 </div>
 
                 {/* Blog Writing Best Practices */}
-                <div className="bg-white p-10 rounded-[40px] border border-orange-100 shadow-xl mb-12 animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                <div className="bg-white dark:bg-gray-900 p-10 rounded-[40px] border border-orange-100 shadow-xl mb-12 animate-slide-up" style={{ animationDelay: '0.1s' }}>
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
                         <div>
-                            <h2 className="text-xl font-black text-gray-900 tracking-tight lowercase flex items-center gap-3">
+                            <h2 className="text-xl font-black text-gray-900 dark:text-white tracking-tight lowercase flex items-center gap-3">
                                 <Sparkles className="h-5 w-5 text-emerald-600" />
                                 blog writing best practices
                             </h2>
@@ -82,10 +82,10 @@ const BlogManagement = () => {
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {bestPractices.map((text, i) => (
                             <div key={i} className="p-6 bg-emerald-50/30 rounded-3xl border border-emerald-50 hover:border-emerald-200 transition-all flex flex-col gap-4">
-                                <div className="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-sm">
+                                <div className="h-10 w-10 bg-white dark:bg-gray-900 rounded-xl flex items-center justify-center shadow-sm">
                                     <div className="text-emerald-600 font-black text-lg">{i + 1}</div>
                                 </div>
-                                <p className="text-xs font-bold text-gray-500 uppercase leading-relaxed tracking-tight">
+                                <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase leading-relaxed tracking-tight">
                                     {text}
                                 </p>
                             </div>
@@ -110,7 +110,7 @@ const BlogManagement = () => {
 
                         <button
                             onClick={() => navigate('/teacher/create-blog')}
-                            className="w-full py-4 bg-white text-emerald-700 font-black rounded-xl shadow-xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-3 group/btn"
+                            className="w-full py-4 bg-white dark:bg-gray-900 text-emerald-700 font-black rounded-xl shadow-xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-3 group/btn"
                         >
                             Create Blog Post
                             <ArrowRight className="h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -132,7 +132,7 @@ const BlogManagement = () => {
 
                         <button
                             onClick={() => navigate('/teacher/manage-blogs')}
-                            className="w-full py-4 bg-white text-indigo-700 font-black rounded-xl shadow-xl hover:bg-indigo-50 transition-all flex items-center justify-center gap-3"
+                            className="w-full py-4 bg-white dark:bg-gray-900 text-indigo-700 font-black rounded-xl shadow-xl hover:bg-indigo-50 transition-all flex items-center justify-center gap-3"
                         >
                             View All Blog Posts
                             <LayoutList className="h-4 w-4" />

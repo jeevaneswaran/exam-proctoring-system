@@ -79,6 +79,10 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
                     profile_picture: profilePicUrl
                 }))
 
+                // Note: Explicit profile creation removed here because AuthContext.jsx 
+                // contains JIT (Just-In-Time) profile creation logic that automatically 
+                // handles this via the onAuthStateChange listener using user_metadata.
+
                 // Supabase returns a user with empty identities when email already exists
                 // instead of returning a clear error. Detect this case explicitly.
                 if (!error && data?.user?.identities?.length === 0) {
@@ -121,12 +125,12 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
     if (user && !authLoading) {
         return (
             <div className={`min-h-screen ${bgClass} flex items-center justify-center p-6 sm:p-12`}>
-                <div className="w-full max-w-md bg-white rounded-[40px] p-10 shadow-2xl text-center border border-gray-100 animate-fade-in">
+                <div className="w-full max-w-md bg-white dark:bg-gray-900 rounded-[40px] p-10 shadow-2xl text-center border border-gray-100 dark:border-gray-800 animate-fade-in">
                     <div className="h-20 w-20 bg-orange-100 rounded-3xl flex items-center justify-center text-orange-600 mx-auto mb-6 shadow-inner">
                         <User className="h-10 w-10" />
                     </div>
-                    <h2 className="text-2xl font-black text-gray-900 mb-2">Already Logged In</h2>
-                    <p className="text-gray-500 font-medium mb-8">
+                    <h2 className="text-2xl font-black text-gray-900 dark:text-white mb-2">Already Logged In</h2>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium mb-8">
                         You are currently signed in as a <span className="text-brand-red font-bold uppercase">{role}</span>.
                         Please logout if you wish to use a different account type.
                     </p>
@@ -150,8 +154,8 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
     }
 
     return (
-        <div className={`min-h-screen flex items-center justify-center ${bgClass} py-12 px-4 sm:px-6 lg:px-8`}>
-            <div className={`w-full bg-white p-8 rounded-2xl shadow-xl border border-gray-100 transition-all duration-300 ${isSignUp ? 'max-w-2xl' : 'max-w-md'}`}>
+        <div className={`min-h-screen flex items-center justify-center ${bgClass} py-12 px-4 sm:px-6 lg:px-8 ${role === 'student' ? 'student-theme' : ''}`}>
+            <div className={`w-full bg-white dark:bg-gray-900 p-8 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-800 transition-all duration-300 ${isSignUp ? 'max-w-2xl' : 'max-w-md'}`}>
                 <div className="text-center mb-8">
                     {/* Header */}
                     <div className="mx-auto h-12 w-12 rounded-full bg-brand-red/10 flex items-center justify-center mb-4">
@@ -159,10 +163,10 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
                     </div>
                     {isSignUp ? (
                         <>
-                            <h2 className="text-2xl font-bold text-gray-900">
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
                                 {role === 'teacher' ? 'Teacher' : role === 'admin' ? 'Admin' : 'Student'} Registration
                             </h2>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 {role === 'teacher' ? 'Create your professional account' :
                                     role === 'admin' ? 'Create your management account' :
                                         'Create your account to access courses and examination'}
@@ -170,8 +174,8 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
                         </>
                     ) : (
                         <>
-                            <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
-                            <p className="text-sm text-gray-500 mt-1">Sign in to access your dashboard</p>
+                            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">{title}</h2>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Sign in to access your dashboard</p>
                         </>
                     )}
                 </div>
@@ -190,7 +194,7 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
                         <div className="space-y-6">
                             {/* Personal Information */}
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3 border-b pb-1">Personal Information</h3>
+                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 border-b pb-1">Personal Information</h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">First Name</label>
@@ -219,7 +223,7 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
 
                             {/* Contact Details */}
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3 border-b pb-1">Contact Details</h3>
+                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 border-b pb-1">Contact Details</h3>
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-700 mb-1">Contact Number</label>
@@ -260,7 +264,7 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
 
                             {/* Account Security */}
                             <div>
-                                <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider mb-3 border-b pb-1">Account Security</h3>
+                                <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-3 border-b pb-1">Account Security</h3>
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
@@ -306,7 +310,7 @@ const LoginForm = ({ role, title, redirectPath, defaultSignUp = false }) => {
                                                 name="profilePic"
                                                 accept="image/*"
                                                 onChange={handleFileChange}
-                                                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-red/10 file:text-brand-red hover:file:bg-brand-red/20 transition-all cursor-pointer"
+                                                className="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-brand-red/10 file:text-brand-red hover:file:bg-brand-red/20 transition-all cursor-pointer"
                                             />
                                         </div>
                                     </div>

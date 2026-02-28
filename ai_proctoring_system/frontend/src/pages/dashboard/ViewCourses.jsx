@@ -47,13 +47,13 @@ const ViewCourses = () => {
                             <span className="h-1 w-8 bg-amber-600 rounded-full"></span>
                             Course Manage
                         </div>
-                        <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">Examination Management</h1>
-                        <p className="text-sm font-medium text-gray-500 lowercase tracking-widest leading-relaxed">
+                        <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Examination Management</h1>
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400 lowercase tracking-widest leading-relaxed">
                             view and manage all your examinations courses
                         </p>
                     </div>
 
-                    <div className="flex items-center gap-4 bg-white px-8 py-5 rounded-[32px] border border-gray-100 shadow-sm">
+                    <div className="flex items-center gap-4 bg-white dark:bg-gray-900 px-8 py-5 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm">
                         <div className="text-center border-r border-orange-100 pr-6">
                             <p className="text-3xl font-black text-amber-600">{courses.length}</p>
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Courses Available</p>
@@ -77,12 +77,12 @@ const ViewCourses = () => {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="search for finding the course..."
-                            className="block w-full pl-14 pr-6 py-4 bg-white border-2 border-orange-50 rounded-[24px] text-gray-900 font-bold placeholder:text-gray-300 focus:outline-none focus:border-amber-600 transition-all shadow-sm group-hover:shadow-md"
+                            className="block w-full pl-14 pr-6 py-4 bg-white dark:bg-gray-900 border-2 border-orange-50 rounded-[24px] text-gray-900 dark:text-white font-bold placeholder:text-gray-300 focus:outline-none focus:border-amber-600 transition-all shadow-sm group-hover:shadow-md"
                         />
                     </div>
 
                     <div className="flex items-center gap-3 w-full md:w-auto">
-                        <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-white border-2 border-gray-100 rounded-2xl text-gray-600 font-bold hover:border-indigo-100 hover:text-indigo-600 transition-all shadow-sm">
+                        <button className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-4 bg-white dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-800 rounded-2xl text-gray-600 dark:text-gray-300 font-bold hover:border-indigo-100 hover:text-indigo-600 transition-all shadow-sm">
                             <Filter className="h-5 w-5" />
                             Filters
                         </button>
@@ -97,7 +97,7 @@ const ViewCourses = () => {
                 </div>
 
                 {/* Table Section */}
-                <div className="bg-white rounded-[40px] border border-gray-100 shadow-2xl overflow-hidden animate-slide-up" style={{ animationDelay: '0.1s' }}>
+                <div className="bg-white dark:bg-gray-900 rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-2xl overflow-hidden animate-slide-up" style={{ animationDelay: '0.1s' }}>
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
@@ -117,10 +117,10 @@ const ViewCourses = () => {
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex items-center gap-4">
-                                                <div className="h-10 w-10 rounded-xl bg-gray-50 text-gray-400 flex items-center justify-center group-hover:bg-white group-hover:text-indigo-600 transition-all font-black border border-transparent group-hover:border-indigo-100 shadow-sm">
+                                                <div className="h-10 w-10 rounded-xl bg-gray-50 dark:bg-gray-950 text-gray-400 flex items-center justify-center group-hover:bg-white group-hover:text-indigo-600 transition-all font-black border border-transparent group-hover:border-indigo-100 shadow-sm">
                                                     {course.name.charAt(0)}
                                                 </div>
-                                                <span className="text-gray-900 font-bold text-base tracking-tight">{course.name}</span>
+                                                <span className="text-gray-900 dark:text-white font-bold text-base tracking-tight">{course.name}</span>
                                             </div>
                                         </td>
                                         <td className="px-8 py-6 text-center">
@@ -129,7 +129,7 @@ const ViewCourses = () => {
                                             </span>
                                         </td>
                                         <td className="px-8 py-6 text-center">
-                                            <span className="text-gray-900 font-black text-base">{course.marks}</span>
+                                            <span className="text-gray-900 dark:text-white font-black text-base">{course.marks}</span>
                                         </td>
                                         <td className="px-8 py-6">
                                             <div className="flex items-center justify-center gap-2">
@@ -152,10 +152,10 @@ const ViewCourses = () => {
 
                     {filteredCourses.length === 0 && (
                         <div className="p-20 text-center bg-gray-50/30">
-                            <div className="h-20 w-20 bg-gray-100 text-gray-300 rounded-3xl flex items-center justify-center mx-auto mb-6">
+                            <div className="h-20 w-20 bg-gray-100 dark:bg-gray-800 text-gray-300 rounded-3xl flex items-center justify-center mx-auto mb-6">
                                 <Search className="h-10 w-10" />
                             </div>
-                            <h3 className="text-xl font-black text-gray-900 mb-2">No courses found</h3>
+                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">No courses found</h3>
                             <p className="text-gray-400 font-medium lowercase">try searching with a different keyword</p>
                         </div>
                     )}

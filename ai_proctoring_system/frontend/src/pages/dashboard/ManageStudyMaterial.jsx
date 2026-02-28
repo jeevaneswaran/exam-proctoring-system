@@ -104,7 +104,7 @@ const ManageStudyMaterial = () => {
                             <span className="h-1 w-8 bg-amber-600 rounded-full"></span>
                             Resource portal
                         </div>
-                        <h1 className="text-4xl font-black text-gray-900 mb-2 tracking-tight">Study Material Management</h1>
+                        <h1 className="text-4xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Study Material Management</h1>
                         <p className="text-sm font-medium text-gray-400 lowercase tracking-wider leading-relaxed">
                             organized educational resources for your students
                         </p>
@@ -126,16 +126,16 @@ const ManageStudyMaterial = () => {
                         placeholder="Search your materials..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-full pl-12 pr-6 py-4 bg-white border border-orange-100 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-medium"
+                        className="w-full pl-12 pr-6 py-4 bg-white dark:bg-gray-900 border border-orange-100 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 transition-all font-medium"
                     />
                 </div>
 
                 {/* Materials List Section */}
                 <div className="space-y-6 animate-slide-up" style={{ animationDelay: '0.1s' }}>
                     <div className="flex items-center gap-4 mb-4">
-                        <h2 className="text-xl font-black text-gray-900 tracking-tight">Your Uploaded Materials</h2>
+                        <h2 className="text-xl font-black text-gray-900 dark:text-white tracking-tight">Your Uploaded Materials</h2>
                         <div className="h-[1px] flex-1 bg-gradient-to-r from-gray-200 to-transparent"></div>
-                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest bg-white px-3 py-1 rounded-full border border-gray-100">
+                        <span className="text-xs font-bold text-gray-400 uppercase tracking-widest bg-white dark:bg-gray-900 px-3 py-1 rounded-full border border-gray-100 dark:border-gray-800">
                             {filteredMaterials.length} total
                         </span>
                     </div>
@@ -154,13 +154,13 @@ const ManageStudyMaterial = () => {
                     ) : filteredMaterials.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-20">
                             {filteredMaterials.map((material) => (
-                                <div key={material.id} className="bg-white p-6 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all group flex gap-6">
+                                <div key={material.id} className="bg-white dark:bg-gray-900 p-6 rounded-[32px] border border-orange-100 shadow-sm hover:shadow-xl transition-all group flex gap-6">
                                     <div className="h-16 w-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 group-hover:bg-amber-600 group-hover:text-white transition-all">
                                         <FileText className="h-8 w-8" />
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h3 className="font-black text-gray-900 mb-1 truncate">{material.title}</h3>
-                                        <p className="text-xs text-gray-500 line-clamp-2 mb-3 leading-relaxed italic">
+                                        <h3 className="font-black text-gray-900 dark:text-white mb-1 truncate">{material.title}</h3>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mb-3 leading-relaxed italic">
                                             {material.description || 'No description provided.'}
                                         </p>
                                         <div className="flex items-center gap-4">
@@ -193,8 +193,8 @@ const ManageStudyMaterial = () => {
                     ) : (
                         <div className="py-20 text-center bg-white/50 rounded-[40px] border-2 border-dashed border-orange-200">
                             <UploadCloud className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                            <h3 className="text-xl font-black text-gray-900 mb-2 tracking-tight">No materials uploaded yet</h3>
-                            <p className="text-gray-500 font-medium mb-8">Start by uploading your first study material to share with students.</p>
+                            <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">No materials uploaded yet</h3>
+                            <p className="text-gray-500 dark:text-gray-400 font-medium mb-8">Start by uploading your first study material to share with students.</p>
                             <button
                                 onClick={() => navigate('/teacher/upload-material')}
                                 className="px-8 py-4 bg-[#1A1612] text-white font-black rounded-2xl hover:bg-black transition-all inline-flex items-center gap-3 shadow-xl shadow-orange-950/20"

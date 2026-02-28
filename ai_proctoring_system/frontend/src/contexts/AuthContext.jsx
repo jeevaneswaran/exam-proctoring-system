@@ -52,18 +52,53 @@ export const AuthProvider = ({ children }) => {
                 .eq('id', userId)
                 .single()
 
-            if (error) throw error
-            setRole(data?.role)
-            setIsApproved(data?.is_approved ?? false)
+            if (error) {
+                // If profile doesn't exist, create it from metadata
+                if (error.code === 'PGRST116') { // single() returns this code when no rows found
+                    const meta = currentUser?.user_metadata || {}
+                    const metaRole = meta.role || 'student'
+
+                    const { data: newProfile, error: insertError } = await supabase
+                        .from('profiles')
+                        .insert([
+                            {
+                                id: userId,
+                                email: currentUser.email,
+                                role: metaRole,
+                                first_name: meta.first_name || '',
+                                last_name: meta.last_name || '',
+                                contact_number: meta.contact_number || '',
+                                address: meta.address || '',
+                                profile_picture: meta.profile_picture || '',
+                                is_approved: metaRole !== 'teacher'
+                            }
+                        ])
+                        .select()
+                        .single()
+
+                    if (insertError) {
+                        console.error('JIT Profile Creation Error:', insertError)
+                        setRole(metaRole)
+                        setIsApproved(false)
+                    } else {
+                        setRole(newProfile.role)
+                        setIsApproved(newProfile.is_approved)
+                    }
+                } else {
+                    throw error
+                }
+            } else {
+                setRole(data?.role)
+                setIsApproved(data?.is_approved ?? false)
+            }
         } catch (error) {
             console.error('Error fetching role:', error)
-            // If profile doesn't exist yet, use metadata role from the user object passed in
             const metaRole = currentUser?.user_metadata?.role
             if (metaRole) {
                 setRole(metaRole)
                 setIsApproved(false)
             } else {
-                setRole('student') // Default to student if everything fails
+                setRole('student')
                 setIsApproved(false)
             }
         } finally {

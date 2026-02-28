@@ -3,7 +3,7 @@ import { Shield, Eye, Lock, Activity, ArrowRight, Github, Twitter, Linkedin, Shi
 
 const LandingPage = () => {
     return (
-        <div className="overflow-hidden bg-white min-h-screen text-brand-black">
+        <div className="overflow-hidden bg-white dark:bg-gray-900 min-h-screen text-brand-black dark:text-white">
             {/* HERO SECTION */}
             <section className="relative pt-24 pb-32 overflow-hidden bg-gradient-to-b from-gray-50 to-white">
                 <div className="absolute inset-0 z-0 opacity-30">
@@ -17,10 +17,10 @@ const LandingPage = () => {
                             <ShieldCheck className="h-4 w-4" />
                             Secure Exam Environment
                         </div>
-                        <h1 className="text-5xl font-black tracking-tight text-brand-black sm:text-7xl mb-8 leading-tight">
+                        <h1 className="text-5xl font-black tracking-tight text-brand-black dark:text-white sm:text-7xl mb-8 leading-tight">
                             AI <span className="text-brand-red">Proctoring</span> System
                         </h1>
-                        <p className="mt-8 text-xl leading-relaxed text-gray-600 mb-12 max-w-2xl mx-auto font-medium">
+                        <p className="mt-8 text-xl leading-relaxed text-gray-600 dark:text-gray-300 mb-12 max-w-2xl mx-auto font-medium">
                             A reliable, secure, and user-friendly solution for online examinations. Real-time monitoring and violation detection powered by advanced AI.
                         </p>
                         <div className="flex flex-wrap items-center justify-center gap-6">
@@ -32,7 +32,7 @@ const LandingPage = () => {
                             </Link>
                             <Link
                                 to="/teacher/login"
-                                className="group px-10 py-5 bg-white text-brand-black font-bold rounded-2xl border-2 border-gray-100 hover:border-brand-red hover:shadow-lg transition-all duration-300 flex items-center gap-3"
+                                className="group px-10 py-5 bg-white dark:bg-gray-900 text-brand-black dark:text-white font-bold rounded-2xl border-2 border-gray-100 dark:border-gray-800 hover:border-brand-red hover:shadow-lg transition-all duration-300 flex items-center gap-3"
                             >
                                 Teacher Login <Cpu className="h-5 w-5 text-brand-red" />
                             </Link>
@@ -64,12 +64,12 @@ const LandingPage = () => {
                                 bg: "bg-brand-brand-orange/5"
                             }
                         ].map((feature, i) => (
-                            <div key={i} className="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-md transition-all">
+                            <div key={i} className="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
                                 <div className={`h-14 w-14 rounded-2xl ${feature.bg} ${feature.color} flex items-center justify-center mb-6`}>
                                     <feature.icon className="h-7 w-7" />
                                 </div>
                                 <h3 className="text-xl font-bold mb-3">{feature.title}</h3>
-                                <p className="text-gray-500 font-medium leading-relaxed">{feature.desc}</p>
+                                <p className="text-gray-500 dark:text-gray-400 font-medium leading-relaxed">{feature.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -104,7 +104,7 @@ const LandingPage = () => {
             </section>
 
             {/* FOOTER */}
-            <footer className="bg-gray-50 border-t border-gray-200 pt-24 pb-12">
+            <footer className="bg-gray-50 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-700 pt-24 pb-12">
                 <div className="mx-auto max-w-7xl px-6 lg:px-8">
                     <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
                         <div className="col-span-1 md:col-span-1">
@@ -114,42 +114,42 @@ const LandingPage = () => {
                                 </div>
                                 <span className="text-2xl font-black uppercase tracking-tight">AI<span className="text-brand-red">PROCTOR</span></span>
                             </div>
-                            <p className="text-gray-500 text-sm font-medium leading-relaxed">
+                            <p className="text-gray-500 dark:text-gray-400 text-sm font-medium leading-relaxed">
                                 Professional online examination security solutions powered by advanced artificial intelligence.
                             </p>
                         </div>
                         <div>
-                            <h3 className="text-sm font-bold text-gray-900 mb-6">Quick Links</h3>
+                            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">Quick Links</h3>
                             <ul className="space-y-4">
-                                <li><a href="#" className="text-gray-500 hover:text-brand-red transition-colors text-sm font-medium">Student Portal</a></li>
-                                <li><a href="#" className="text-gray-500 hover:text-brand-red transition-colors text-sm font-medium">Teacher Dashboard</a></li>
-                                <li><a href="#" className="text-gray-500 hover:text-brand-red transition-colors text-sm font-medium">Admin Access</a></li>
+                                <li><a href="#" className="text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">Student Portal</a></li>
+                                <li><a href="#" className="text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">Teacher Dashboard</a></li>
+                                <li><a href="#" className="text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">Admin Access</a></li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-sm font-bold text-gray-900 mb-6">Resources</h3>
+                            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">Resources</h3>
                             <ul className="space-y-4">
-                                <li><a href="#" className="text-gray-500 hover:text-brand-red transition-colors text-sm font-medium">Documentation</a></li>
-                                <li><a href="#" className="text-gray-500 hover:text-brand-red transition-colors text-sm font-medium">Privacy Policy</a></li>
-                                <li><a href="#" className="text-gray-500 hover:text-brand-red transition-colors text-sm font-medium">Terms of Use</a></li>
+                                <li><a href="#" className="text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">Documentation</a></li>
+                                <li><a href="#" className="text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">Privacy Policy</a></li>
+                                <li><a href="#" className="text-gray-500 dark:text-gray-400 hover:text-brand-red transition-colors text-sm font-medium">Terms of Use</a></li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-sm font-bold text-gray-900 mb-6">Connect</h3>
+                            <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-6">Connect</h3>
                             <div className="flex gap-4">
-                                <a href="#" className="h-10 w-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:border-brand-red hover:text-brand-red transition-all">
+                                <a href="#" className="h-10 w-10 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:border-brand-red hover:text-brand-red transition-all">
                                     <Github className="h-5 w-5" />
                                 </a>
-                                <a href="#" className="h-10 w-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:border-brand-red hover:text-brand-red transition-all">
+                                <a href="#" className="h-10 w-10 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:border-brand-red hover:text-brand-red transition-all">
                                     <Twitter className="h-5 w-5" />
                                 </a>
-                                <a href="#" className="h-10 w-10 rounded-lg bg-white border border-gray-200 flex items-center justify-center hover:border-brand-red hover:text-brand-red transition-all">
+                                <a href="#" className="h-10 w-10 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 flex items-center justify-center hover:border-brand-red hover:text-brand-red transition-all">
                                     <Linkedin className="h-5 w-5" />
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div className="border-t border-gray-200 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 font-medium">
+                    <div className="border-t border-gray-200 dark:border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500 dark:text-gray-400 font-medium">
                         <p>&copy; 2026 AI Proctoring System. All rights reserved.</p>
                         <div className="flex gap-6">
                             <a href="#" className="hover:text-brand-red transition-colors">Privacy</a>

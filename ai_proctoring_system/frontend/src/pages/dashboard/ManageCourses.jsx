@@ -30,8 +30,8 @@ const ManageCourses = () => {
                         <span className="h-1 w-8 bg-amber-600 rounded-full"></span>
                         <span className="text-xs font-black text-amber-600 uppercase tracking-widest">New Page</span>
                     </div>
-                    <h1 className="text-5xl font-black text-gray-900 mb-4 tracking-tight">Exam Management</h1>
-                    <p className="text-sm font-medium text-gray-500 uppercase tracking-widest leading-relaxed">
+                    <h1 className="text-5xl font-black text-gray-900 dark:text-white mb-4 tracking-tight">Exam Management</h1>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-widest leading-relaxed">
                         Create new courses, manage existing exam and organize your educational content effectively
                     </p>
                 </header>
@@ -55,22 +55,22 @@ const ManageCourses = () => {
                 {/* Management Section */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     {/* Add New Course Box */}
-                    <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
+                    <div className="bg-white dark:bg-gray-900 p-10 rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group">
                         <div className="h-16 w-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-8 group-hover:bg-amber-600 group-hover:text-white transition-all duration-500 group-hover:rotate-12 shadow-sm">
                             <PlusCircle className="h-8 w-8" />
                         </div>
 
-                        <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">Add New Course</h2>
+                        <h2 className="text-3xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Add New Course</h2>
                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-8">
                             Create a new course with custom exam parameters and settings for your student
                         </p>
 
                         <div className="space-y-4 mb-10">
-                            <div className="flex items-center gap-3 p-4 bg-amber-50/30 rounded-2xl border border-amber-50 text-gray-600 font-bold text-sm">
+                            <div className="flex items-center gap-3 p-4 bg-amber-50/30 rounded-2xl border border-amber-50 text-gray-600 dark:text-gray-300 font-bold text-sm">
                                 <CheckSquare className="h-5 w-5 text-amber-600" />
                                 <span>Set course name and details</span>
                             </div>
-                            <div className="flex items-center gap-3 p-4 bg-amber-50/30 rounded-2xl border border-amber-50 text-gray-600 font-bold text-sm">
+                            <div className="flex items-center gap-3 p-4 bg-amber-50/30 rounded-2xl border border-amber-50 text-gray-600 dark:text-gray-300 font-bold text-sm">
                                 <CheckSquare className="h-5 w-5 text-amber-600" />
                                 <span>Define total question</span>
                             </div>
@@ -94,24 +94,24 @@ const ManageCourses = () => {
                         </div>
 
                         <h2 className="text-3xl font-black mb-2 tracking-tight">View All Courses</h2>
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-10 leading-relaxed">
+                        <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-10 leading-relaxed">
                             Browse, edit and manage all your existing courses and exam configuration in one intelligent dashboard
                         </p>
 
                         <div className="grid grid-cols-2 gap-4 mb-10">
                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <p className="text-[10px] font-bold text-gray-500 uppercase mb-1 tracking-widest">Total Exams</p>
+                                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 tracking-widest">Total Exams</p>
                                 <p className="text-2xl font-black text-amber-500">24</p>
                             </div>
                             <div className="p-4 bg-white/5 rounded-2xl border border-white/5">
-                                <p className="text-[10px] font-bold text-gray-500 uppercase mb-1 tracking-widest">Active</p>
+                                <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase mb-1 tracking-widest">Active</p>
                                 <p className="text-2xl font-black text-orange-500">08</p>
                             </div>
                         </div>
 
                         <button
                             onClick={() => navigate('/teacher/view-courses')}
-                            className="w-full py-5 bg-white text-black font-black rounded-2xl shadow-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
+                            className="w-full py-5 bg-white dark:bg-gray-900 text-black dark:text-white font-black rounded-2xl shadow-xl hover:bg-gray-100 transition-all flex items-center justify-center gap-3"
                         >
                             View All Sections
                             <ArrowRight className="h-5 w-5 text-orange-600" />

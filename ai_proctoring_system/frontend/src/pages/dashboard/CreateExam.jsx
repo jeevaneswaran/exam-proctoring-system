@@ -87,8 +87,8 @@ const CreateExam = () => {
                         <span className="h-1 w-8 bg-amber-600 rounded-full"></span>
                         <span className="text-xs font-black text-amber-600 uppercase tracking-widest">Exam Architect</span>
                     </div>
-                    <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight">Create AI Exam</h1>
-                    <p className="text-sm font-medium text-gray-500 lowercase tracking-widest">
+                    <h1 className="text-5xl font-black text-gray-900 dark:text-white mb-2 tracking-tight">Create AI Exam</h1>
+                    <p className="text-sm font-medium text-gray-500 dark:text-gray-400 lowercase tracking-widest">
                         Configure your examination parameters and advanced proctoring settings
                     </p>
                 </header>
@@ -98,10 +98,10 @@ const CreateExam = () => {
                     <div className="lg:col-span-2 space-y-8 animate-slide-up">
                         <form onSubmit={handleSubmit} className="space-y-8">
                             {/* Basic Info Card */}
-                            <div className="bg-white p-10 rounded-[40px] border border-gray-100 shadow-2xl relative overflow-hidden group">
+                            <div className="bg-white dark:bg-gray-900 p-10 rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-2xl relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-amber-50 rounded-bl-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
 
-                                <h3 className="text-2xl font-black text-gray-900 mb-8 tracking-tight flex items-center gap-3">
+                                <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-8 tracking-tight flex items-center gap-3">
                                     <Book className="h-6 w-6 text-amber-500" />
                                     Examination Details
                                 </h3>
@@ -115,7 +115,7 @@ const CreateExam = () => {
                                             value={title}
                                             onChange={(e) => setTitle(e.target.value)}
                                             placeholder="e.g. Mid-term Assessment: Neural Networks"
-                                            className="w-full px-6 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all"
+                                            className="w-full px-6 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 dark:text-white font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all"
                                         />
                                     </div>
 
@@ -130,13 +130,13 @@ const CreateExam = () => {
                                                     value={duration}
                                                     onChange={(e) => setDuration(e.target.value)}
                                                     placeholder="60"
-                                                    className="w-full pl-12 pr-4 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all"
+                                                    className="w-full pl-12 pr-4 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 dark:text-white font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all"
                                                 />
                                             </div>
                                         </div>
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Subject/Category</label>
-                                            <select className="w-full px-6 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all">
+                                            <select className="w-full px-6 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 dark:text-white font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all">
                                                 <option>Computer Science</option>
                                                 <option>Mathematics</option>
                                                 <option>Information Security</option>
@@ -151,7 +151,7 @@ const CreateExam = () => {
                                             onChange={(e) => setDescription(e.target.value)}
                                             rows="4"
                                             placeholder="Ensure your camera is working..."
-                                            className="w-full px-6 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all resize-none"
+                                            className="w-full px-6 py-4 bg-amber-50/20 border-2 border-orange-50 rounded-2xl text-gray-900 dark:text-white font-bold focus:outline-none focus:border-amber-600 focus:bg-white transition-all resize-none"
                                         />
                                     </div>
                                 </div>
@@ -165,7 +165,7 @@ const CreateExam = () => {
                                     <Shield className="h-6 w-6 text-amber-500" />
                                     AI Proctoring Settings
                                 </h3>
-                                <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-10 italic">
+                                <p className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-10 italic">
                                     select features to enable during this exam session
                                 </p>
 
@@ -181,7 +181,7 @@ const CreateExam = () => {
                                                 }`}
                                         >
                                             <div className="flex items-center gap-4">
-                                                <div className={`h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${proctoringOptions[key] ? 'bg-amber-500 text-white' : 'bg-white/10 text-gray-500'
+                                                <div className={`h-12 w-12 rounded-xl flex items-center justify-center transition-colors ${proctoringOptions[key] ? 'bg-amber-500 text-white' : 'bg-white/10 text-gray-500 dark:text-gray-400'
                                                     }`}>
                                                     {key === 'faceDetection' && <Camera className="h-6 w-6" />}
                                                     {key === 'tabTracking' && <MonitorOff className="h-6 w-6" />}
@@ -199,7 +199,7 @@ const CreateExam = () => {
                                             </div>
                                             <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-all ${proctoringOptions[key] ? 'border-amber-500 bg-amber-500' : 'border-white/10'
                                                 }`}>
-                                                {proctoringOptions[key] && <div className="h-2 w-2 rounded-full bg-white animate-pulse"></div>}
+                                                {proctoringOptions[key] && <div className="h-2 w-2 rounded-full bg-white dark:bg-gray-900 animate-pulse"></div>}
                                             </div>
                                         </button>
                                     ))}
@@ -234,7 +234,7 @@ const CreateExam = () => {
 
                     {/* Right Column: Preview Side */}
                     <div className="hidden lg:block space-y-8 animate-fade-in translate-y-4">
-                        <div className="bg-white p-8 rounded-[40px] border border-orange-100 shadow-xl sticky top-24">
+                        <div className="bg-white dark:bg-gray-900 p-8 rounded-[40px] border border-orange-100 shadow-xl sticky top-24">
                             <h4 className="text-xs font-black text-amber-600 uppercase tracking-widest mb-6 flex items-center gap-2">
                                 <Eye className="h-4 w-4" />
                                 Student View Preview
@@ -249,7 +249,7 @@ const CreateExam = () => {
                                     <h5 className="text-2xl font-black mb-2 tracking-tight line-clamp-2">
                                         {title || 'Exam Title Placeholder'}
                                     </h5>
-                                    <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-8">
+                                    <p className="text-gray-500 dark:text-gray-400 text-xs font-bold uppercase tracking-widest mb-8">
                                         Duration: {duration || '0'} Min
                                     </p>
 
@@ -264,7 +264,7 @@ const CreateExam = () => {
                                         </div>
                                     </div>
 
-                                    <button className="w-full py-4 bg-white text-black font-black rounded-2xl text-xs uppercase tracking-widest">
+                                    <button className="w-full py-4 bg-white dark:bg-gray-900 text-black dark:text-white font-black rounded-2xl text-xs uppercase tracking-widest">
                                         Start Examination
                                     </button>
                                 </div>

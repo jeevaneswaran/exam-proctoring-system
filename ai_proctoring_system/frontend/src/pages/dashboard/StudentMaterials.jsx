@@ -56,7 +56,7 @@ const StudentMaterials = () => {
     )
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-[#FFFBF0] via-[#FFF5E6] to-[#FFF0D9] flex">
+        <div className="min-h-screen bg-gradient-to-br from-[#FFFBF0] via-[#FFF5E6] to-[#FFF0D9] flex student-theme">
             {/* Minimal Sidebar */}
             <div className="w-20 bg-[#1A1612] flex flex-col items-center py-8 gap-8 border-r border-white/5 shadow-2xl shrink-0">
                 <Link to="/student/dashboard" className="p-3 bg-white/5 rounded-2xl text-orange-500/50 hover:text-white transition-all shadow-xl shadow-black/20">
@@ -72,7 +72,7 @@ const StudentMaterials = () => {
                             <span className="h-1 w-8 bg-orange-600 rounded-full"></span>
                             Learning Library
                         </div>
-                        <h1 className="text-4xl font-black text-gray-900 tracking-tight">Your Study Materials</h1>
+                        <h1 className="text-4xl font-black text-gray-900 dark:text-white tracking-tight">Your Study Materials</h1>
                         <p className="text-sm font-medium text-gray-400 lowercase tracking-wider mt-2">
                             access and download resources shared by your teachers
                         </p>
@@ -86,7 +86,7 @@ const StudentMaterials = () => {
                                 placeholder="Search materials or teachers..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="pl-12 pr-6 py-4 bg-white border border-gray-100 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all w-80 font-medium"
+                                className="pl-12 pr-6 py-4 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-2xl shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all w-80 font-medium"
                             />
                         </div>
                     </div>
@@ -98,9 +98,9 @@ const StudentMaterials = () => {
                         <p className="font-bold uppercase tracking-widest text-xs tracking-[0.2em]">Syncing Library...</p>
                     </div>
                 ) : error ? (
-                    <div className="p-12 bg-white rounded-[40px] border border-orange-100 text-center shadow-xl">
+                    <div className="p-12 bg-white dark:bg-gray-900 rounded-[40px] border border-orange-100 text-center shadow-xl">
                         <AlertCircle className="h-16 w-16 text-rose-500 mx-auto mb-6" />
-                        <h3 className="text-xl font-black text-gray-900 mb-2">{error}</h3>
+                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">{error}</h3>
                         <button onClick={fetchMaterials} className="mt-4 px-6 py-3 bg-orange-600 text-white font-bold rounded-xl hover:bg-orange-700 transition-all">
                             Retry Connection
                         </button>
@@ -110,7 +110,7 @@ const StudentMaterials = () => {
                         {filteredMaterials.map((material, i) => (
                             <div
                                 key={material.id}
-                                className="bg-white p-8 rounded-[40px] border border-orange-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden flex flex-col"
+                                className="bg-white dark:bg-gray-900 p-8 rounded-[40px] border border-orange-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group relative overflow-hidden flex flex-col"
                                 style={{ animationDelay: `${i * 0.1}s` }}
                             >
                                 {/* Decorative elements */}
@@ -123,10 +123,10 @@ const StudentMaterials = () => {
                                         </div>
                                     </div>
 
-                                    <h3 className="text-xl font-black text-gray-900 mb-3 group-hover:text-orange-600 transition-colors line-clamp-2">
+                                    <h3 className="text-xl font-black text-gray-900 dark:text-white mb-3 group-hover:text-orange-600 transition-colors line-clamp-2">
                                         {material.title}
                                     </h3>
-                                    <p className="text-sm text-gray-500 font-medium mb-6 line-clamp-2 leading-relaxed italic">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mb-6 line-clamp-2 leading-relaxed italic">
                                         {material.description || 'No description provided.'}
                                     </p>
 
@@ -163,8 +163,8 @@ const StudentMaterials = () => {
                         {filteredMaterials.length === 0 && (
                             <div className="col-span-full py-20 text-center bg-white/50 rounded-[40px] border-2 border-dashed border-orange-200">
                                 <Search className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                                <h3 className="text-xl font-black text-gray-900 mb-2">No materials found</h3>
-                                <p className="text-gray-500 font-medium">Try searching with a different keyword or teacher name.</p>
+                                <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">No materials found</h3>
+                                <p className="text-gray-500 dark:text-gray-400 font-medium">Try searching with a different keyword or teacher name.</p>
                             </div>
                         )}
                     </div>

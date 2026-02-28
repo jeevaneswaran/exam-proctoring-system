@@ -8,7 +8,7 @@ const StudentLogin = () => {
     return (
         <div>
             <div className="absolute top-4 left-4 z-10">
-                <Link to="/student/welcome" className="text-gray-600 hover:text-brand-black flex items-center gap-2 font-medium">
+                <Link to="/student/welcome" className="text-gray-600 dark:text-gray-300 hover:text-brand-black flex items-center gap-2 font-medium">
                     &larr; Back to Welcome
                 </Link>
             </div>

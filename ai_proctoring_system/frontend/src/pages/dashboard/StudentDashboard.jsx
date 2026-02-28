@@ -17,9 +17,11 @@ import {
     MessageSquare,
     Send,
     CheckCircle2,
-    AlertTriangle
+    AlertTriangle,
+    ShieldCheck
 } from 'lucide-react'
 import { supabase } from '../../lib/supabase'
+import AISupportBot from '../../components/support/AISupportBot'
 
 const StudentDashboard = () => {
     const { user } = useAuth()
@@ -27,20 +29,67 @@ const StudentDashboard = () => {
     const [supportForm, setSupportForm] = useState({ subject: '', category: 'Technical', message: '' })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitSuccess, setSubmitSuccess] = useState(false)
+    const [stats, setStats] = useState({
+        exams: 0,
+        questions: 0,
+        progress: 0,
+        batches: 0,
+        weakArea: 'N/A'
+    })
     const [notices, setNotices] = useState([])
     const [loadingNotices, setLoadingNotices] = useState(true)
 
     useEffect(() => {
         fetchNotices()
+        fetchRealStats()
     }, [])
+
+    const fetchRealStats = async () => {
+        try {
+            // 1. Get Available Exams count
+            const { count: examCount } = await supabase
+                .from('exams')
+                .select('*', { count: 'exact', head: true })
+
+            // 2. Get Total Questions count
+            const { count: questionCount } = await supabase
+                .from('questions')
+                .select('*', { count: 'exact', head: true })
+
+            // 3. Get student results for progress calculation
+            if (!user) return
+
+            const { data: results } = await supabase
+                .from('results')
+                .select('score')
+                .eq('student_id', user.id)
+
+            let avgScore = 0
+            if (results && results.length > 0) {
+                const total = results.reduce((acc, curr) => acc + curr.score, 0)
+                avgScore = Math.round(total / results.length)
+            }
+
+            setStats({
+                exams: examCount || 0,
+                questions: questionCount || 0,
+                progress: avgScore,
+                batches: Math.floor(avgScore / 40), // Example logic for batches
+                weakArea: avgScore < 50 ? 'Low Avg Score' : 'None'
+            })
+        } catch (error) {
+            console.error('Error fetching stats:', error.message)
+        }
+    }
 
     const fetchNotices = async () => {
         try {
+            setLoadingNotices(true)
             const { data, error } = await supabase
                 .from('notices')
                 .select('*')
                 .order('created_at', { ascending: false })
-                .limit(5)
+                .limit(3)
 
             if (error) throw error
             setNotices(data || [])
@@ -53,42 +102,45 @@ const StudentDashboard = () => {
 
     const handleSupportSubmit = async (e) => {
         e.preventDefault()
+        if (!user) return
+
         setIsSubmitting(true)
         try {
             const { error } = await supabase
                 .from('support_tickets')
-                .insert([{
-                    student_id: user.id,
-                    subject: supportForm.subject,
-                    category: supportForm.category,
-                    message: supportForm.message,
-                    status: 'pending'
-                }])
+                .insert([
+                    {
+                        student_id: user.id,
+                        subject: supportForm.subject,
+                        category: supportForm.category,
+                        message: supportForm.message,
+                        status: 'pending'
+                    }
+                ])
 
             if (error) throw error
             setSubmitSuccess(true)
-            setSupportForm({ subject: '', category: 'Technical', message: '' })
             setTimeout(() => {
-                setSubmitSuccess(false)
                 setIsSupportModalOpen(false)
+                setSubmitSuccess(false)
+                setSupportForm({ subject: '', category: 'Technical', message: '' })
             }, 2000)
         } catch (error) {
-            console.error('Error sending support ticket:', error.message)
-            alert('Failed to send message. Please try again.')
+            alert('Failed to send message: ' + error.message)
         } finally {
             setIsSubmitting(false)
         }
     }
 
     // Mock data for display
-    const userName = user?.user_metadata?.name || user?.email?.split('@')[0] || 'Student'
+    const userName = user?.user_metadata?.first_name || user?.user_metadata?.name || user?.email?.split('@')[0] || 'Student'
 
     return (
-        <div className="flex h-[calc(100vh-4rem)] bg-orange-100">
+        <div className="flex h-[calc(100vh-4rem)] bg-orange-100 student-theme">
             {/* 1. Left Hand Side Dashboard (Sidebar) */}
             <aside className="w-64 bg-gray-900 border-r border-gray-800 hidden md:flex flex-col">
                 <div className="p-6">
-                    <h2 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Menu</h2>
+                    <h2 className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">Menu</h2>
                     <nav className="space-y-2">
                         <Link to="/student/dashboard" className="flex items-center gap-3 px-4 py-3 bg-orange-500 text-white rounded-xl font-medium transition-colors shadow-lg shadow-orange-900/20">
                             <LayoutDashboard className="h-5 w-5" />
@@ -126,8 +178,8 @@ const StudentDashboard = () => {
             <main className="flex-1 overflow-y-auto p-8">
                 {/* 2. Top Header */}
                 <header className="mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome back, <span className="text-orange-600 capitalize">{userName}</span>!</h1>
-                    <p className="text-gray-500 text-sm">
+                    <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Welcome back, <span className="text-orange-600 capitalize">{userName}</span>!</h1>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
                         Ready to continue your learning journey? Let's achieve great things today.
                     </p>
                 </header>
@@ -135,20 +187,20 @@ const StudentDashboard = () => {
                 {/* 3. Stats Row (Animation separate boxes) */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
                     {[
-                        { label: 'Available Exam', value: '03', icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
-                        { label: 'Total Questions', value: '150', icon: HelpCircle, color: 'text-purple-600', bg: 'bg-purple-50' },
-                        { label: 'Progress', value: '85%', icon: BarChart2, color: 'text-green-600', bg: 'bg-green-50' },
-                        { label: 'Achieve Batches', value: '02', icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50' },
-                        { label: 'Weak Areas', value: 'Algebra', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
+                        { label: 'Available Exam', value: stats.exams.toString().padStart(2, '0'), icon: FileText, color: 'text-blue-600', bg: 'bg-blue-50' },
+                        { label: 'Total Questions', value: stats.questions, icon: HelpCircle, color: 'text-purple-600', bg: 'bg-purple-50' },
+                        { label: 'Progress', value: stats.progress + '%', icon: BarChart2, color: 'text-green-600', bg: 'bg-green-50' },
+                        { label: 'Achieve Batches', value: stats.batches.toString().padStart(2, '0'), icon: Trophy, color: 'text-amber-600', bg: 'bg-amber-50' },
+                        { label: 'Weak Areas', value: stats.weakArea, icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
                     ].map((stat, idx) => {
                         const Icon = stat.icon;
                         return (
-                            <div key={idx} className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 duration-300">
+                            <div key={idx} className="bg-white dark:bg-gray-900 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all hover:-translate-y-1 duration-300">
                                 <div className={`h-10 w-10 rounded-xl ${stat.bg} ${stat.color} flex items-center justify-center mb-3`}>
                                     <Icon className="h-5 w-5" />
                                 </div>
-                                <h3 className="text-2xl font-bold text-gray-900 mb-1">{stat.value}</h3>
-                                <p className="text-xs text-gray-500 font-medium">{stat.label}</p>
+                                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{stat.value}</h3>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">{stat.label}</p>
                             </div>
                         );
                     })}
@@ -157,17 +209,17 @@ const StudentDashboard = () => {
                 {/* 4. Optimized Quick Actions Row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                     {[
-                        { title: 'Take Exam', icon: PlayCircle, link: '/student/exams', bg: 'bg-white', iconBg: 'bg-gray-900', text: 'text-gray-900' },
-                        { title: 'View Marks', icon: BarChart2, link: '/student/results', bg: 'bg-white', iconBg: 'bg-orange-500', text: 'text-orange-900' },
-                        { title: 'Study Blogs', icon: Sparkles, link: '/student/blogs', bg: 'bg-white', iconBg: 'bg-emerald-500', text: 'text-emerald-900' },
-                        { title: 'Library', icon: BookOpen, link: '/student/materials', bg: 'bg-white', iconBg: 'bg-blue-500', text: 'text-blue-900' },
+                        { title: 'Take Exam', icon: PlayCircle, link: '/student/exams', bg: 'bg-white dark:bg-gray-900', iconBg: 'bg-gray-900', text: 'text-gray-900 dark:text-white' },
+                        { title: 'View Marks', icon: BarChart2, link: '/student/results', bg: 'bg-white dark:bg-gray-900', iconBg: 'bg-orange-500', text: 'text-orange-900' },
+                        { title: 'Study Blogs', icon: Sparkles, link: '/student/blogs', bg: 'bg-white dark:bg-gray-900', iconBg: 'bg-emerald-500', text: 'text-emerald-900' },
+                        { title: 'Library', icon: BookOpen, link: '/student/materials', bg: 'bg-white dark:bg-gray-900', iconBg: 'bg-blue-500', text: 'text-blue-900' },
                     ].map((action, i) => {
                         const Icon = action.icon;
                         return (
                             <Link
                                 key={i}
                                 to={action.link}
-                                className={`group flex items-center p-4 ${action.bg} rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300`}
+                                className={`group flex items-center p-4 ${action.bg} rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300`}
                             >
                                 <div className={`h-12 w-12 rounded-xl ${action.iconBg} flex items-center justify-center mr-4 shadow-lg group-hover:rotate-12 transition-transform shrink-0`}>
                                     <Icon className="h-6 w-6 text-white" />
@@ -179,6 +231,40 @@ const StudentDashboard = () => {
                             </Link>
                         );
                     })}
+                </div>
+
+                {/* Student Guidelines Section */}
+                <div className="bg-white dark:bg-gray-900 p-8 rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-sm mb-8 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-50 rounded-full -mr-32 -mt-32 group-hover:scale-110 transition-transform duration-500"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center justify-between mb-8">
+                            <div>
+                                <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Proctoring Guidelines</h2>
+                                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mt-1">Important rules for examination integrity</p>
+                            </div>
+                            <div className="h-12 w-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-600/20 rotate-3 group-hover:rotate-6 transition-transform">
+                                <ShieldCheck className="h-6 w-6" />
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {[
+                                { title: 'Environment', text: 'Ensure you are in a quiet, well-lit private room without distractions.', icon: Bell },
+                                { title: 'AI Monitoring', text: 'Real-time AI will monitor your movements and detect prohibited objects.', icon: Sparkles },
+                                { title: 'Device Rules', text: 'Usage of mobile phones, secondary monitors, or tablets is strictly prohibited.', icon: AlertTriangle }
+                            ].map((rule, i) => (
+                                <div key={i} className="p-5 bg-gray-50 dark:bg-gray-950 rounded-2xl border border-transparent hover:border-indigo-100 transition-all">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="h-8 w-8 bg-white dark:bg-gray-900 rounded-lg flex items-center justify-center text-indigo-600 shadow-sm">
+                                            <rule.icon className="h-4 w-4" />
+                                        </div>
+                                        <h4 className="font-black text-sm text-gray-900 dark:text-white">{rule.title}</h4>
+                                    </div>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium leading-relaxed">{rule.text}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 {/* 5. Bottom Content Blocks */}
@@ -232,12 +318,12 @@ const StudentDashboard = () => {
                     </div>
 
                     {/* Need Help? Box */}
-                    <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                    <div className="bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm">
                         <div className="flex items-center gap-2 mb-4">
                             <HelpCircle className="h-5 w-5 text-brand-red" />
-                            <h3 className="font-bold text-gray-900">Need Help?</h3>
+                            <h3 className="font-bold text-gray-900 dark:text-white">Need Help?</h3>
                         </div>
-                        <p className="text-sm text-gray-500 mb-4">
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
                             Facing issues with the exam portal or need academic support? Send a message to the admin.
                         </p>
                         <button
@@ -247,7 +333,7 @@ const StudentDashboard = () => {
                             <MessageSquare className="h-4 w-4" />
                             Contact Support
                         </button>
-                        <div className="mt-4 pt-4 border-t border-gray-100 text-xs text-center text-gray-400">
+                        <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-800 text-xs text-center text-gray-400">
                             v1.0.2 • Student Portal
                         </div>
                     </div>
@@ -256,7 +342,7 @@ const StudentDashboard = () => {
                 {/* Contact Support Modal */}
                 {isSupportModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-gray-900/80 backdrop-blur-sm animate-fade-in">
-                        <div className="bg-white w-full max-w-md rounded-[40px] overflow-hidden shadow-2xl relative animate-slide-up">
+                        <div className="bg-white dark:bg-gray-900 w-full max-w-md rounded-[40px] overflow-hidden shadow-2xl relative animate-slide-up">
                             <button
                                 onClick={() => setIsSupportModalOpen(false)}
                                 className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-xl text-gray-400 transition-all"
@@ -270,7 +356,7 @@ const StudentDashboard = () => {
                                         <MessageSquare className="h-6 w-6" />
                                     </div>
                                     <div>
-                                        <h2 className="text-2xl font-black text-gray-900">Admin Support</h2>
+                                        <h2 className="text-2xl font-black text-gray-900 dark:text-white">Admin Support</h2>
                                         <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Send a direct message</p>
                                     </div>
                                 </div>
@@ -280,7 +366,7 @@ const StudentDashboard = () => {
                                         <div className="h-20 w-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mx-auto mb-6">
                                             <CheckCircle2 className="h-10 w-10" />
                                         </div>
-                                        <h3 className="text-xl font-black text-gray-900 mb-2">Message Sent!</h3>
+                                        <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2">Message Sent!</h3>
                                         <p className="text-gray-400 font-medium">Admin will be notified of your issue.</p>
                                     </div>
                                 ) : (
@@ -290,7 +376,7 @@ const StudentDashboard = () => {
                                             <select
                                                 value={supportForm.category}
                                                 onChange={(e) => setSupportForm({ ...supportForm, category: e.target.value })}
-                                                className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-red-500 rounded-2xl outline-none transition-all font-bold text-gray-700 appearance-none"
+                                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-950 border-2 border-transparent focus:border-red-500 rounded-2xl outline-none transition-all font-bold text-gray-700 appearance-none"
                                             >
                                                 <option>Technical</option>
                                                 <option>Academic</option>
@@ -307,7 +393,7 @@ const StudentDashboard = () => {
                                                 placeholder="Briefly describe the topic..."
                                                 value={supportForm.subject}
                                                 onChange={(e) => setSupportForm({ ...supportForm, subject: e.target.value })}
-                                                className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-red-500 rounded-2xl outline-none transition-all font-bold text-gray-700"
+                                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-950 border-2 border-transparent focus:border-red-500 rounded-2xl outline-none transition-all font-bold text-gray-700"
                                             />
                                         </div>
 
@@ -319,7 +405,7 @@ const StudentDashboard = () => {
                                                 placeholder="Tell us more about the issue you are facing..."
                                                 value={supportForm.message}
                                                 onChange={(e) => setSupportForm({ ...supportForm, message: e.target.value })}
-                                                className="w-full px-5 py-4 bg-gray-50 border-2 border-transparent focus:border-red-500 rounded-2xl outline-none transition-all font-bold text-gray-700 resize-none"
+                                                className="w-full px-5 py-4 bg-gray-50 dark:bg-gray-950 border-2 border-transparent focus:border-red-500 rounded-2xl outline-none transition-all font-bold text-gray-700 resize-none"
                                             ></textarea>
                                         </div>
 
@@ -342,6 +428,7 @@ const StudentDashboard = () => {
                     </div>
                 )}
             </main>
+            <AISupportBot />
         </div>
     )
 }
