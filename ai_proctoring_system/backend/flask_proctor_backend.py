@@ -68,6 +68,14 @@ def decode_image(b64string):
 
 # ─── Routes ──────────────────────────────────────────────────────────────────
 
+@app.route('/', methods=['GET'])
+def index():
+    return jsonify({
+        "status": "online",
+        "message": "AI Proctoring API is running successfully! 🚀",
+        "instruction": "Please use the Vercel frontend application to interact with this API."
+    })
+
 @app.route('/health', methods=['GET', 'OPTIONS'])
 def health():
     return jsonify({"status": "online", "model": "yolov8n", "phone_class_id": PHONE_CLASS_ID})
