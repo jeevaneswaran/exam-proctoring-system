@@ -3,7 +3,7 @@ import { AlertTriangle, ShieldCheck, ShieldAlert, Eye, Camera } from 'lucide-rea
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
 const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'
-const FRAME_INTERVAL_MS = 2500     // Send to YOLO every 2.5s
+const FRAME_INTERVAL_MS = 5000     // Send to YOLO every 5s (Render CPU is slow)
 const INFERENCE_INTERVAL_MS = 150  // Run MediaPipe every 150ms (smooth face box)
 const HEAD_YAW_WARN = 45        // Degrees before side-look warning
 const HEAD_PITCH_WARN = 35        // Degrees before tilt warning
@@ -231,7 +231,7 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ image: screenshot }),
-                signal: AbortSignal.timeout(8000)
+                signal: AbortSignal.timeout(20000)
             })
             if (!res.ok) return
             const data = await res.json()
