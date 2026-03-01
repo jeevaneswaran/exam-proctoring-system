@@ -2,7 +2,16 @@ import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { AlertTriangle, ShieldCheck, ShieldAlert, Eye, Camera } from 'lucide-react'
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
-const BACKEND_URL = import.meta.env.VITE_API_BASE_URL || 'https://interactions-hayes-commonly-suffered.trycloudflare.com'
+// Dynamic backend URL: check localStorage first (set via browser console), then env var, then localhost
+function getBackendUrl() {
+    if (typeof window !== 'undefined' && localStorage.getItem('YOLO_BACKEND_URL')) {
+        return localStorage.getItem('YOLO_BACKEND_URL')
+    }
+    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'
+}
+const BACKEND_URL = getBackendUrl()
+// Expose helper: run in browser console → localStorage.setItem('YOLO_BACKEND_URL','https://your-tunnel.trycloudflare.com')
+if (typeof window !== 'undefined') window.__YOLO_URL = BACKEND_URL
 const FRAME_INTERVAL_MS = 2500     // Send to YOLO every 2.5s
 const INFERENCE_INTERVAL_MS = 150  // Run MediaPipe every 150ms (smooth face box)
 const HEAD_YAW_WARN = 45        // Degrees before side-look warning
