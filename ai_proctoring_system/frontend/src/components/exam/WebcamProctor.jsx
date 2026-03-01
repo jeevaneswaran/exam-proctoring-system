@@ -2,12 +2,17 @@ import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { AlertTriangle, ShieldCheck, ShieldAlert, Eye, Camera } from 'lucide-react'
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
+// Force remove broken URL from user's browser memory
+if (typeof window !== 'undefined') {
+    localStorage.removeItem('YOLO_BACKEND_URL')
+}
+
 // Dynamic backend URL: check localStorage first (set via browser console), then env var, then localhost
 function getBackendUrl() {
     if (typeof window !== 'undefined' && localStorage.getItem('YOLO_BACKEND_URL')) {
         return localStorage.getItem('YOLO_BACKEND_URL')
     }
-    return import.meta.env.VITE_API_BASE_URL || 'https://thirty-insects-invite.loca.lt'
+    return import.meta.env.VITE_API_BASE_URL || 'https://gentle-mugs-rhyme.loca.lt'
 }
 const BACKEND_URL = getBackendUrl()
 // Expose helper: run in browser console → localStorage.setItem('YOLO_BACKEND_URL','https://your-tunnel.trycloudflare.com')
@@ -157,18 +162,22 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
             const bw = (x2 - x1) * scaleX
             const bh = (y2 - y1) * scaleY
 
-            const isProhibited = ['cell phone', 'book', 'laptop', 'remote', 'tablet'].includes(det.object)
-            const color = isProhibited ? '#ef4444' : '#f59e0b'
+            const isProhibited = ['cell phone', 'book', 'laptop', 'remote', 'tablet'].includes(det.name)
+            const color = isProhibited ? '#ef4444' : (det.name === 'person' ? '#3b82f6' : '#f59e0b')
 
-            ctx.shadowColor = isProhibited ? 'rgba(239,68,68,0.7)' : 'rgba(245,158,11,0.5)'
+            ctx.shadowColor = isProhibited ? 'rgba(239,68,68,0.7)' : (det.name === 'person' ? 'rgba(59,130,246,0.5)' : 'rgba(245,158,11,0.5)')
             ctx.shadowBlur = 10
             drawRoundRect(ctx, bx, by, bw, bh, 4, color, null)
             ctx.shadowBlur = 0
 
+            let displayName = det.name
+            if (det.name === 'person') displayName = 'USER'
+
             const label = isProhibited
-                ? `⚠ ${det.object.toUpperCase()} ${Math.round(det.accuracy * 100)}%`
-                : `${det.object} ${Math.round(det.accuracy * 100)}%`
-            drawLabel(ctx, label, bx + 2, by, isProhibited ? '#dc2626' : '#d97706')
+                ? `⚠ ${displayName.toUpperCase()} ${Math.round(det.accuracy * 100)}%`
+                : `${displayName.toUpperCase()} ${Math.round(det.accuracy * 100)}%`
+
+            drawLabel(ctx, label, bx + 2, by, isProhibited ? '#dc2626' : (det.name === 'person' ? '#2563eb' : '#d97706'))
         })
     }, [])
 
