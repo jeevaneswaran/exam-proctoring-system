@@ -7,7 +7,7 @@ function getBackendUrl() {
     if (typeof window !== 'undefined' && localStorage.getItem('YOLO_BACKEND_URL')) {
         return localStorage.getItem('YOLO_BACKEND_URL')
     }
-    return import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001'
+    return import.meta.env.VITE_API_BASE_URL || 'https://thirty-insects-invite.loca.lt'
 }
 const BACKEND_URL = getBackendUrl()
 // Expose helper: run in browser console → localStorage.setItem('YOLO_BACKEND_URL','https://your-tunnel.trycloudflare.com')
