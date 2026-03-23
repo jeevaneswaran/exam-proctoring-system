@@ -7,19 +7,30 @@ from flask_cors import CORS
 from ultralytics import YOLO
 from PIL import Image
 import io
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-# ─── Load Model ──────────────────────────────────────────────────────────────
-print("📦 Loading YOLOv8 model...")
-model = YOLO('yolov8n.pt')
-print("✅ YOLOv8 model loaded. Classes available:", len(model.names))
+# ─── Load Models ─────────────────────────────────────────────────────────────
+print("📦 Loading Baseline YOLO11 model (for person tracking)...")
+model_base = YOLO('yolo11n.pt')
 
-print("⚙️ Warming up model to prevent first-request timeout...")
+print("📦 Loading Custom YOLO Model (for specific objects)...")
+custom_weights = 'runs/detect/custom_proctor/weights/best.pt'
+model_custom = None
+if os.path.exists(custom_weights):
+    model_custom = YOLO(custom_weights)
+    print("✅ Custom model loaded. Classes:", model_custom.names)
+else:
+    print("⚠️ Custom model not found. Using baseline only.")
+
+print("⚙️ Warming up models to prevent first-request timeout...")
 dummy_img = np.zeros((640, 640, 3), dtype=np.uint8)
-_ = model(dummy_img, verbose=False)
-print("✅ Model warm-up complete.")
+_ = model_base(dummy_img, verbose=False)
+if model_custom:
+    _ = model_custom(dummy_img, verbose=False)
+print("✅ Models warm-up complete.")
 
 
 # ─── State ───────────────────────────────────────────────────────────────────
@@ -33,18 +44,17 @@ MOVE_THRESHOLD    = 8000  # frame-diff sensitivity
 # SEPARATE thresholds:
 # - Objects (phone, book): LOW threshold = easier to detect
 # - Person: HIGH threshold = avoid false positives from reflections/monitors/pictures
-CONF_OBJECT = 0.20   # Low — catches phones at odd angles
-CONF_PERSON = 0.65   # High — only real persons, not reflections/backgrounds
+CONF_OBJECT = 0.15   # Low — catches phones at odd angles
+CONF_PERSON = 0.75   # High — only real persons, not reflections/backgrounds
 
-PROHIBITED_CLASSES = {'cell phone', 'book', 'laptop', 'remote', 'tablet'}
+PROHIBITED_CLASSES = {'cell phone', 'book', 'laptop', 'remote', 'tablet', 'objects', 'pen'}
 
-# Find phone class ID so we can print what YOLO returns
+# Find phone class ID in base model
 PHONE_CLASS_ID = None
-for cid, name in model.names.items():
+for cid, name in model_base.names.items():
     if name == 'cell phone':
         PHONE_CLASS_ID = cid
         break
-print(f"📱 Phone class ID in YOLO: {PHONE_CLASS_ID}")
 
 # Store last received frame for debugging
 last_received_frame = None
@@ -78,18 +88,22 @@ def index():
 
 @app.route('/health', methods=['GET', 'OPTIONS'])
 def health():
-    return jsonify({"status": "online", "model": "yolov8n", "phone_class_id": PHONE_CLASS_ID})
-
+    if request.method == 'OPTIONS':
+        return jsonify({"status": "ok"}), 200
+    return jsonify({
+        "status": "online",
+        "model": "yolo11n_dual",
+        "phone_class_id": PHONE_CLASS_ID
+    }), 200
 
 @app.route('/test', methods=['GET'])
 def test_detection():
     return jsonify({
-        "message": "YOLO model is loaded",
-        "total_classes": len(model.names),
-        "cell_phone_class_id": PHONE_CLASS_ID,
+        "message": "Dual YOLO models are loaded",
+        "total_classes_base": len(model_base.names),
+        "total_classes_custom": len(model_custom.names) if model_custom else 0,
         "prohibited_classes": list(PROHIBITED_CLASSES),
-        "confidence_threshold": CONF_THRESHOLD,
-        "tip": "Lower threshold means easier detection. Current: " + str(CONF_THRESHOLD)
+        "confidence_threshold": { "object": CONF_OBJECT, "person": CONF_PERSON }
     })
 
 
@@ -131,46 +145,45 @@ def process_frame():
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (21, 21), 0)
 
-    # ─── Run YOLO at the LOWEST possible conf to get all candidates ─────
-    # Then we filter per-class below with appropriate thresholds
-    results = model(frame, verbose=False, conf=CONF_OBJECT)[0]
-    all_detected = [(model.names[int(b.cls[0])], round(float(b.conf[0]),2)) for b in results.boxes]
-    print(f"  YOLO raw detections: {all_detected if all_detected else 'nothing'}")
-
+    # ─── Run Models ─────────────────────────────────────────────────────────
+    # We evaluate the base model for persons/standard objects, and custom model for custom objects
     person_count = 0
     violation    = False
     violation_details = {}
     detected_objects  = []
 
-    for box in results.boxes:
-        cls_id = int(box.cls[0])
-        label  = model.names[cls_id]
-        conf   = float(box.conf[0])
-        x1, y1, x2, y2 = [round(v) for v in box.xyxy[0].tolist()]
+    def evaluate_results(results, model_ref):
+        nonlocal person_count, violation, violation_details
+        for box in results.boxes:
+            cls_id = int(box.cls[0])
+            label  = model_ref.names[cls_id]
+            conf   = float(box.conf[0])
+            x1, y1, x2, y2 = [round(v) for v in box.xyxy[0].tolist()]
 
-        # ── Per-class confidence gating ──────────────────────────────────
-        if label == 'person':
-            if conf < CONF_PERSON:   # Ignore low-confidence person detections
-                print(f"  ↳ Skipping 'person' at {int(conf*100)}% (below {int(CONF_PERSON*100)}% threshold)")
-                continue
-            person_count += 1
-            detected_objects.append({"name": "person", "accuracy": round(conf,2), "box": [x1,y1,x2,y2]})
-            print(f"  ✅ Person confirmed at {int(conf*100)}%")
+            # Translate vague custom labels
+            if label == 'objects': label = 'airpods'
 
-        elif label in PROHIBITED_CLASSES and conf >= CONF_OBJECT:
-            # Prohibited object — add to list AND flag violation
-            detected_objects.append({"name": label, "accuracy": round(conf,2), "box": [x1,y1,x2,y2]})
-            violation = True
-            violation_details = {
-                "msg": f"PROHIBITED OBJECT: {label.upper()} ({int(conf*100)}% confidence)",
-                "object": label,
-                "confidence": round(conf, 2)
-            }
-            print(f"  ⚠️  VIOLATION: {label} at {int(conf*100)}%!")
+            if label == 'person':
+                if conf < CONF_PERSON: continue
+                person_count += 1
+                detected_objects.append({"name": "person", "accuracy": round(conf,2), "box": [x1,y1,x2,y2]})
+            elif label in PROHIBITED_CLASSES and conf >= CONF_OBJECT:
+                detected_objects.append({"name": label, "accuracy": round(conf,2), "box": [x1,y1,x2,y2]})
+                violation = True
+                violation_details = {"msg": f"PROHIBITED OBJECT: {label.upper()} ({int(conf*100)}% conf)", "object": label, "confidence": round(conf, 2)}
+            else:
+                detected_objects.append({"name": label, "accuracy": round(conf,2), "box": [x1,y1,x2,y2]})
 
-        else:
-            # Other objects — just show box, no violation
-            detected_objects.append({"name": label, "accuracy": round(conf,2), "box": [x1,y1,x2,y2]})
+    # Evaluate Baseline Model
+    res_base = model_base(frame, verbose=False, conf=CONF_OBJECT)[0]
+    evaluate_results(res_base, model_base)
+
+    # Evaluate Custom Model (if loaded)
+    if model_custom:
+        res_custom = model_custom(frame, verbose=False, conf=CONF_OBJECT)[0]
+        evaluate_results(res_custom, model_custom)
+
+
 
     # ─── Multiple persons (only counted if above strict threshold) ────
     if person_count > 1:

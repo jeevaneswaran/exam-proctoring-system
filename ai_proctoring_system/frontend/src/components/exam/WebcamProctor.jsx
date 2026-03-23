@@ -12,7 +12,7 @@ function getBackendUrl() {
     if (typeof window !== 'undefined' && localStorage.getItem('YOLO_BACKEND_URL')) {
         return localStorage.getItem('YOLO_BACKEND_URL')
     }
-    return import.meta.env.VITE_API_BASE_URL || 'https://gentle-mugs-rhyme.loca.lt'
+    return import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:5001'
 }
 const BACKEND_URL = getBackendUrl()
 // Expose helper: run in browser console → localStorage.setItem('YOLO_BACKEND_URL','https://your-tunnel.trycloudflare.com')
@@ -162,7 +162,7 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
             const bw = (x2 - x1) * scaleX
             const bh = (y2 - y1) * scaleY
 
-            const isProhibited = ['cell phone', 'book', 'laptop', 'remote', 'tablet'].includes(det.name)
+            const isProhibited = ['cell phone', 'book', 'laptop', 'remote', 'tablet', 'objects', 'pen', 'airpods'].includes(det.name)
             const color = isProhibited ? '#ef4444' : (det.name === 'person' ? '#3b82f6' : '#f59e0b')
 
             ctx.shadowColor = isProhibited ? 'rgba(239,68,68,0.7)' : (det.name === 'person' ? 'rgba(59,130,246,0.5)' : 'rgba(245,158,11,0.5)')

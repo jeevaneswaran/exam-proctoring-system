@@ -4,7 +4,7 @@ import { supabase } from '../../lib/supabase'
 import { SupabaseService } from '../../services/SupabaseService'
 import { useAuth } from '../../contexts/AuthContext'
 
-import { Timer, AlertTriangle, Sparkles, ShieldCheck, Activity, Terminal, Camera } from 'lucide-react'
+import { Timer, AlertTriangle, Sparkles, ShieldCheck, Activity, Terminal, Camera, ArrowRight } from 'lucide-react'
 import EricaChat from '../../components/shared/EricaChat'
 import PreExamValidation from '../../components/exam/PreExamValidation'
 import WebcamProctor from '../../components/exam/WebcamProctor'
@@ -81,7 +81,7 @@ const ExamPage = () => {
             await supabase.from('exam_progress').delete().eq('student_id', user.id).eq('exam_id', examId)
 
             alert(`Exam submitted successfully! Your score: ${totalScore}`)
-            navigate('/student/dashboard')
+            navigate('/student/results')
         } catch (err) {
             console.error('Error submitting exam:', err.message)
             alert('Failed to submit exam. Please contact your instructor.')
@@ -116,12 +116,47 @@ const ExamPage = () => {
             }, ...prev].slice(0, 10))
         })
 
-        setViolationCount(v => v + alertList.length)
+        setViolationCount(v => {
+            const nextCount = v + alertList.length
+            if (nextCount >= 45 && !submitting) {
+                alert("🔴 EXAM TERMINATED: You have exceeded the absolute maximum of 45 warnings. Your exam will now be automatically submitted.")
+                handleSubmit()
+            }
+            return nextCount
+        })
 
         if (user && alertList.length > 0) {
             await SupabaseService.logViolation(user.id, examId, alertList.join(' | '), score)
         }
-    }, [user, examId, handleSubmit])
+    }, [user, examId, handleSubmit, submitting])
+
+    // --- Tab Switching Detection ---
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            if (document.hidden && validationComplete && timeLeft > 0 && !submitting) {
+                handleViolation("TAB SWITCH DETECTED")
+            } else if (!document.hidden && validationComplete && timeLeft > 0 && !submitting) {
+                // When they return to the tab, show the security overlay so they have to click 'Resume'
+                setShowSecurityOverlay(true)
+            }
+        }
+
+        // Prevent accidental tab closure/refresh
+        const handleBeforeUnload = (e) => {
+            if (validationComplete && timeLeft > 0 && !submitting) {
+                e.preventDefault()
+                e.returnValue = "Are you sure you want to leave the examination? Your progress will be lost."
+            }
+        }
+
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+        window.addEventListener('beforeunload', handleBeforeUnload)
+
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+        }
+    }, [validationComplete, timeLeft, submitting, handleViolation])
 
 
     // 1. AUTO-LOAD & PERSISTENCE

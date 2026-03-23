@@ -7,7 +7,8 @@ import {
     TrendingUp,
     Award,
     Clock,
-    Search
+    Search,
+    Trash2
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
@@ -45,6 +46,24 @@ const StudentResults = () => {
             console.error('Error fetching results:', error.message)
         } finally {
             setLoading(false)
+        }
+    }
+
+    const handleDeleteResult = async (resultId) => {
+        if (!window.confirm("Are you sure you want to permanently delete this exam result?")) return;
+        try {
+            const { error } = await supabase
+                .from('results')
+                .delete()
+                .eq('id', resultId);
+            
+            if (error) throw error;
+            
+            // Instantly remove from UI without reload
+            setResults(prev => prev.filter(r => r.id !== resultId));
+        } catch (error) {
+            console.error("Error deleting result:", error.message);
+            alert("Failed to delete result: " + error.message);
         }
     }
 
@@ -128,16 +147,16 @@ const StudentResults = () => {
                 ) : filteredResults.length > 0 ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {filteredResults.map((r) => (
-                            <div key={r.id} className="bg-white dark:bg-gray-900 p-8 rounded-[40px] border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-orange-50 rounded-bl-full -mr-16 -mt-16 group-hover:scale-110 transition-transform"></div>
+                            <div key={r.id} className="bg-white dark:bg-gray-900 p-6 rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all duration-500 group relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-orange-50 rounded-bl-full -mr-12 -mt-12 group-hover:scale-110 transition-transform"></div>
 
                                 <div className="relative z-10">
-                                    <div className="flex items-center gap-3 mb-6">
-                                        <div className="h-10 w-10 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
-                                            <FileText className="h-5 w-5" />
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="h-8 w-8 bg-orange-500 rounded-xl flex items-center justify-center text-white shadow-lg shadow-orange-500/20">
+                                            <FileText className="h-4 w-4" />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-black text-gray-900 dark:text-white leading-tight">{r.exams?.title}</h3>
+                                            <h3 className="text-lg font-black text-gray-900 dark:text-white leading-tight">{r.exams?.title}</h3>
                                             <div className="flex items-center gap-4 text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">
                                                 <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {new Date(r.submitted_at).toLocaleDateString()}</span>
                                                 <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {r.exams?.duration_minutes} min</span>
@@ -145,45 +164,46 @@ const StudentResults = () => {
                                         </div>
                                     </div>
 
-                                    <div className="bg-[#111827] p-8 rounded-[32px] flex items-center justify-between">
+                                    <div className="bg-[#111827] p-6 rounded-3xl flex items-center justify-between">
                                         <div>
                                             <p className="text-[10px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Final Score</p>
                                             <div className="flex items-baseline gap-1">
-                                                <span className="text-5xl font-black text-orange-500">{r.score}</span>
-                                                <span className="text-xl font-black text-gray-600 dark:text-gray-300">%</span>
+                                                <span className="text-4xl font-black text-orange-500">{r.score}</span>
+                                                <span className="text-lg font-black text-gray-600 dark:text-gray-300">%</span>
                                             </div>
                                         </div>
-                                        <div className="h-20 w-20 rounded-full border-4 border-gray-800 flex items-center justify-center relative">
+                                        <div className="h-16 w-16 rounded-full border-4 border-gray-800 flex items-center justify-center relative">
                                             <svg className="h-full w-full -rotate-90 absolute">
+                                                <circle cx="32" cy="32" r="26" fill="transparent" stroke="#1F2937" strokeWidth="6" transform="translate(0,0)" />
                                                 <circle
-                                                    cx="40" cy="40" r="34"
-                                                    fill="transparent"
-                                                    stroke="#1F2937"
-                                                    strokeWidth="6"
-                                                    transform="translate(0,0)"
-                                                />
-                                                <circle
-                                                    cx="40" cy="40" r="34"
-                                                    fill="transparent"
-                                                    stroke="#F97316"
-                                                    strokeWidth="6"
-                                                    strokeDasharray={`${2 * Math.PI * 34}`}
-                                                    strokeDashoffset={`${2 * Math.PI * 34 * (1 - r.score / 100)}`}
+                                                    cx="32" cy="32" r="26"
+                                                    fill="transparent" stroke="#F97316" strokeWidth="6"
+                                                    strokeDasharray={`${2 * Math.PI * 26}`}
+                                                    strokeDashoffset={`${2 * Math.PI * 26 * (1 - r.score / 100)}`}
                                                     strokeLinecap="round"
                                                 />
                                             </svg>
-                                            <Trophy className="h-6 w-6 text-orange-500" />
+                                            <Trophy className="h-5 w-5 text-orange-500" />
                                         </div>
                                     </div>
 
-                                    <div className="mt-8 pt-8 border-t border-gray-50 flex items-center justify-between">
+                                    <div className="mt-6 pt-6 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
                                         <div className="flex items-center gap-2">
                                             <div className={`h-2 w-2 rounded-full ${r.score >= 40 ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`}></div>
-                                            <span className="text-xs font-black text-gray-400 uppercase tracking-tighter">{r.score >= 40 ? 'Passed' : 'Needs Review'}</span>
+                                            <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">{r.score >= 40 ? 'Passed' : 'Needs Review'}</span>
                                         </div>
-                                        <button className="px-6 py-2 bg-gray-50 dark:bg-gray-950 hover:bg-orange-50 text-gray-600 dark:text-gray-300 hover:text-orange-600 font-bold rounded-xl transition-all text-xs border border-transparent hover:border-orange-100">
-                                            Download Transcript
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button className="px-4 py-2 bg-gray-50 dark:bg-gray-950 hover:bg-orange-50 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300 hover:text-orange-600 font-bold rounded-xl transition-all text-[10px] uppercase tracking-widest border border-transparent hover:border-orange-100">
+                                                Transcript
+                                            </button>
+                                            <button 
+                                                onClick={() => handleDeleteResult(r.id)}
+                                                className="p-2 bg-red-50 hover:bg-red-600 text-red-500 hover:text-white rounded-xl transition-all"
+                                                title="Delete Result"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
