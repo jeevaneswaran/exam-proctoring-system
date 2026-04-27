@@ -1,0 +1,22 @@
+# ==============================================================================
+# AI PROCTORING SYSTEM - CUSTOM YOLO DATASET CONFIGURATION
+# ==============================================================================
+# This file tells the YOLO model where your training images are and what objects
+# you want it to learn how to detect.
+
+# 1. Dataset Paths
+# Put your images and label text files in these folders
+path: ./dataset  # dataset root directory
+train: images/train  # folder containing training images
+val: images/val      # folder containing validation images
+
+# 2. Classes (What objects are you teaching the AI to detect?)
+# List the exact names of the objects you are looking for in the same order
+# as you labeled them.
+
+names:
+  0: smartphone
+  1: calculator
+  2: smartwatch
+  3: earpiece
+  4: textbook

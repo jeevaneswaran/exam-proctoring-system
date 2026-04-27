@@ -11,6 +11,7 @@ export const useWebcam = () => {
     const [stream, setStream] = useState(null);
     const videoRef = useRef(null);
     const streamRef = useRef(null); // Keep stream in a ref for immediate access
+    const stopRequestedRef = useRef(false);
 
     // Whenever videoRef or stream changes, attach the stream to the video element
     useEffect(() => {
@@ -20,6 +21,7 @@ export const useWebcam = () => {
     });
 
     const startCamera = useCallback(async () => {
+        stopRequestedRef.current = false;
         // Don't re-request if already running
         if (streamRef.current) {
             if (videoRef.current) videoRef.current.srcObject = streamRef.current;
@@ -36,6 +38,11 @@ export const useWebcam = () => {
                 audio: false
             });
 
+            if (stopRequestedRef.current) {
+                mediaStream.getTracks().forEach(track => track.stop());
+                return null;
+            }
+
             streamRef.current = mediaStream;
             setStream(mediaStream);
 
@@ -51,6 +58,7 @@ export const useWebcam = () => {
     }, []);
 
     const stopCamera = useCallback(() => {
+        stopRequestedRef.current = true;
         if (streamRef.current) {
             streamRef.current.getTracks().forEach(track => {
                 track.stop();

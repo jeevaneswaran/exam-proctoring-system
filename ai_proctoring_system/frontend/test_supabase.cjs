@@ -5,12 +5,11 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase = createClient(supabaseUrl, supabaseKey)
 
 async function test() {
-    const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .limit(5)
-
-    console.log(JSON.stringify(data, null, 2))
+    const tables = ['profiles', 'exams', 'questions', 'results', 'violation_logs', 'notices', 'study_materials', 'support_tickets']
+    for (const table of tables) {
+        const { data, error } = await supabase.from(table).select('*').limit(1)
+        console.log(`Table ${table}: ${error ? '❌ ' + error.message : '✅ OK'}`)
+    }
 }
 
 test()

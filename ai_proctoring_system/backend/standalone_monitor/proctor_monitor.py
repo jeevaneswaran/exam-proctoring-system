@@ -19,6 +19,7 @@ import os
 from ultralytics import YOLO
 from supabase import create_client, Client
 from dotenv import load_dotenv
+from depth_analyzer import DepthAnalyzer
 
 # ─────────────────────────────────────────────
 #  CONFIG & ARGS
@@ -39,16 +40,28 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# Canonical set of prohibited class names
 PROHIBITED_CLASSES = {
-    67: 'MOBILE PHONE',
-    73: 'LAPTOP',
-    84: 'BOOK',
-    65: 'REMOTE',
-    63: 'LAPTOP',   # also keyboard
-    64: 'MOUSE',
+    'cell phone', 'mobile', 'phone', 'smartphone', 'mobile phone',
+    'book', 'textbook', 'notebook',
+    'laptop', 'remote', 'tablet', 'objects', 'pen', 'airpods',
+    'calculator', 'smartwatch', 'earpiece'
 }
-CONF_THRESHOLD = 0.30   # Lower = more sensitive
-WINDOW_NAME   = f"🔒 Neural Sentinel - {STUDENT_ID[:8]}"
+
+# Normalize YOLO variant label names → canonical name for display
+LABEL_ALIASES = {
+    'mobile':        'cell phone',
+    'phone':         'cell phone',
+    'smartphone':    'cell phone',
+    'mobile phone':  'cell phone',
+    'cell_phone':    'cell phone',
+    'textbook':      'book',
+    'notebook':      'book',
+    'ear buds':      'airpods',
+}
+
+CONF_THRESHOLD = 0.10   # Very low = maximum sensitivity
+WINDOW_NAME   = f"🔒 Neural Sentinel"
 
 
 # ─────────────────────────────────────────────
@@ -84,6 +97,21 @@ def put_text_with_bg(img, text, pos, font_scale=0.55, thickness=1,
                 font_scale, fg, thickness, cv2.LINE_AA)
 
 
+def find_latest_custom_model():
+    """Search upwards and into runs/detect/ for latest custom weights."""
+    base_paths = ['./runs/detect', '../runs/detect', '../../runs/detect']
+    for bp in base_paths:
+        if os.path.exists(bp):
+            folders = [d for d in os.listdir(bp) if d.startswith('custom_proctor') and os.path.isdir(os.path.join(bp, d))]
+            if folders:
+                def extract_num(f):
+                    num = f.replace('custom_proctor', '')
+                    return int(num) if num.isdigit() else 0
+                latest = sorted(folders, key=extract_num, reverse=True)[0]
+                path = os.path.join(bp, latest, 'weights', 'best.pt')
+                if os.path.exists(path): return path
+    return None
+
 # ─────────────────────────────────────────────
 #  MAIN MONITOR
 # ─────────────────────────────────────────────
@@ -93,9 +121,16 @@ def main():
     print("="*55)
 
     # Load YOLOv8
-    print("  Loading YOLOv8n model...")
-    yolo = YOLO('yolov8n.pt')
-    print("  ✅  YOLOv8n ready")
+    print("  Searching for latest custom-trained weights...")
+    custom_path = find_latest_custom_model()
+    if custom_path:
+        print(f"  ✅  Loading CUSTOM model: {custom_path}")
+        yolo = YOLO(custom_path)
+    else:
+        print("  ⚠️  Custom weights not found. Loading baseline YOLOv8n...")
+        yolo = YOLO('yolov8n.pt')
+    
+    print(f"  📋  Known Objects: {', '.join(list(yolo.names.values())[:10])}...")
 
     # Load face & eye cascade
     face_cascade = cv2.CascadeClassifier(
@@ -103,6 +138,9 @@ def main():
     eye_cascade = cv2.CascadeClassifier(
         cv2.data.haarcascades + 'haarcascade_eye.xml')
     print("  ✅  Face detector ready")
+
+    # Load Depth Engine
+    depth_engine = DepthAnalyzer()
 
     # Open webcam — try multiple backends to fix Windows black screen
     cap = None
@@ -180,8 +218,10 @@ def main():
     # Violation counters
     violation_log = []
     yolo_every    = 3    # Run YOLO every N frames (saves CPU)
+    depth_every   = 10   # Run Depth every N frames (saves RAM/CPU)
     frame_idx     = 0
     last_yolo_det = []   # Cache last YOLO results between frames
+    last_depth_res = ([], {"status": "ACTIVE"})
 
     last_heartbeat = 0
     heartbeat_every = 5 # seconds
@@ -316,11 +356,14 @@ def main():
             new_det = []
             for box in yolo_results.boxes:
                 cls_id = int(box.cls[0])
+                raw_label = yolo.names[cls_id].lower().strip()
+                label = LABEL_ALIASES.get(raw_label, raw_label)
                 conf   = float(box.conf[0])
-                if cls_id in PROHIBITED_CLASSES:
+                
+                if label in PROHIBITED_CLASSES:
                     coords = [int(c) for c in box.xyxy[0].tolist()]
                     new_det.append({
-                        'label': PROHIBITED_CLASSES[cls_id],
+                        'label': label.upper(),
                         'conf':  conf,
                         'box':   coords
                     })
@@ -339,7 +382,15 @@ def main():
             
             violations_this_frame.append(f"PROHIBITED OBJECT: {det['label']} detected")
 
-        # ── 3. HUD OVERLAY ────────────────────────────────────────
+        # ── 3. DEPTH ANALYSIS (every 10th frame) ───────────────
+        if frame_idx % depth_every == 0:
+            face_box = sorted(faces, key=lambda b: b[2]*b[3], reverse=True)[0] if face_detected else None
+            last_depth_res = depth_engine.analyze(frame, face_box)
+        
+        depth_violations, spatial_info = last_depth_res
+        violations_this_frame.extend(depth_violations)
+
+        # ── 4. HUD OVERLAY ────────────────────────────────────────
         # Top-left status panel
         panel_h = 115
         alpha_blend_rect(display, (0, 0), (260, panel_h), (10, 10, 10), 0.65)
@@ -358,6 +409,13 @@ def main():
                     (10, 86), cv2.FONT_HERSHEY_DUPLEX, 0.48, (200, 200, 200), 1)
         cv2.putText(display, f"OBJECT: {'DETECTED' if last_yolo_det else 'CLEAR'}",
                     (10, 106), cv2.FONT_HERSHEY_DUPLEX, 0.48, obj_col, 1)
+
+        spatial_col = (0, 200, 0) if spatial_info["status"] == "NORMAL" else (0, 100, 255)
+        cv2.putText(display, f"DEPTH : {spatial_info['status']}",
+                    (10, 126), cv2.FONT_HERSHEY_DUPLEX, 0.48, spatial_col, 1)
+
+        # Update panel height for new text
+        panel_h = 135
 
         # FPS display
         fps_text = f"FPS: {cap.get(cv2.CAP_PROP_FPS):.0f}"
@@ -389,6 +447,7 @@ def main():
                 base_risk = 20
                 if multi_person: base_risk = 70
                 elif last_yolo_det: base_risk = 60
+                elif depth_violations: base_risk = 50
                 elif gaze_direction != "FORWARD": base_risk = 40
                 
                 print(f"  [SYNC] Logging violations: {', '.join(violations_this_frame)}")

@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/
+venv/
+*.log
+
+# Node
+node_modules/
+dist/
+.env.local
+
+# YOLO / ML
+ai_proctoring_system/backend/runs/
+ai_proctoring_system/backend/dataset/
+*.pt
+
+# OS / IDE
+.DS_Store
+.vscode/
+*.lnk
+
+# Large images/results
+*.png
+vi

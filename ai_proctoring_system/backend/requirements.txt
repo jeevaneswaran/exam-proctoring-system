@@ -7,3 +7,6 @@ ultralytics
 pillow
 numpy
 python-dotenv
+torch
+torchvision
+timm

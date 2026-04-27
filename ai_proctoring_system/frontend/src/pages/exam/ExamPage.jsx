@@ -54,16 +54,23 @@ const ExamPage = () => {
         setSubmitting(true)
         try {
             stopCamera()
-            let totalScore = 0
+
+            // ── 1. Calculate raw score from correct answers ──────────────────
+            const MARKS_PER_VIOLATION = 0.5  // deduct 0.5 marks per violation
+            let rawScore = 0
             if (exam?.questions) {
                 exam.questions.forEach(q => {
                     const playerAnswer = (selectedAnswers[q.id] || '').trim()
                     const correctAnswer = (q.correct_option || '').trim()
                     if (playerAnswer === correctAnswer && correctAnswer !== '') {
-                        totalScore += (q.marks || 1)
+                        rawScore += (q.marks || 1)
                     }
                 })
             }
+
+            // ── 2. Deduct marks for proctoring violations ─────────────────────
+            const deduction = Math.round(violationCount * MARKS_PER_VIOLATION * 10) / 10
+            const totalScore = Math.max(0, rawScore - deduction)  // never below 0
 
             const { error } = await supabase
                 .from('results')
@@ -80,7 +87,11 @@ const ExamPage = () => {
             localStorage.removeItem(`exam_answers_${examId}`)
             await supabase.from('exam_progress').delete().eq('student_id', user.id).eq('exam_id', examId)
 
-            alert(`Exam submitted successfully! Your score: ${totalScore}`)
+            // ── 3. Show breakdown message ─────────────────────────────────────
+            const deductionMsg = deduction > 0
+                ? `\n\n⚠️ Proctoring Deduction: −${deduction} marks (${violationCount} violations × ${MARKS_PER_VIOLATION})`
+                : '\n\n✅ No proctoring violations — full score retained!'
+            alert(`✅ Exam Submitted!\n\nRaw Score:  ${rawScore}\nDeduction:  −${deduction}\nFinal Score: ${totalScore}${deductionMsg}`)
             navigate('/student/results')
         } catch (err) {
             console.error('Error submitting exam:', err.message)
@@ -88,7 +99,7 @@ const ExamPage = () => {
         } finally {
             setSubmitting(false)
         }
-    }, [submitting, timeLeft, exam, selectedAnswers, examId, user, navigate, stopCamera])
+    }, [submitting, timeLeft, exam, selectedAnswers, examId, user, navigate, stopCamera, violationCount])
 
     const handleViolation = useCallback(async (data) => {
         // STOP_EXAM is now treated as a severe warning — exam is NEVER auto-terminated

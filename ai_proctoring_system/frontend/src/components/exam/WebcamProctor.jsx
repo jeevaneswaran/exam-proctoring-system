@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react'
-import { AlertTriangle, ShieldCheck, ShieldAlert, Eye, Camera } from 'lucide-react'
+import { AlertTriangle, ShieldCheck, ShieldAlert, Eye, Camera, Mic, Volume2, MessageSquare } from 'lucide-react'
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 
 // Force remove broken URL from user's browser memory
@@ -17,11 +17,11 @@ function getBackendUrl() {
 const BACKEND_URL = getBackendUrl()
 // Expose helper: run in browser console → localStorage.setItem('YOLO_BACKEND_URL','https://your-tunnel.trycloudflare.com')
 if (typeof window !== 'undefined') window.__YOLO_URL = BACKEND_URL
-const FRAME_INTERVAL_MS = 2500     // Send to YOLO every 2.5s
+const FRAME_INTERVAL_MS = 1500     // Send to YOLO every 1.5s — faster mobile/book detection
 const INFERENCE_INTERVAL_MS = 150  // Run MediaPipe every 150ms (smooth face box)
 const HEAD_YAW_WARN = 45        // Degrees before side-look warning
 const HEAD_PITCH_WARN = 35        // Degrees before tilt warning
-const WARN_COOLDOWN_MS = 8000      // 8s between same warning
+const WARN_COOLDOWN_MS = 6000      // 6s between same warning — faster feedback
 const NO_FACE_TIMEOUT = 10        // Seconds no-face → stop exam
 
 // ─── Canvas drawing helpers ───────────────────────────────────────────────────
@@ -64,6 +64,7 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
     const isSendingRef = useRef(false)
     const lastWarnTimeRef = useRef({})
     const yoloBoxesRef = useRef([])   // Boxes from last YOLO response
+    const backendOnlineRef = useRef(false) // Ref to avoid stale closure in setInterval
 
     const [status, setStatus] = useState('loading')
     const [backendOnline, setBackendOnline] = useState(false)
@@ -72,6 +73,11 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
     const [noFaceSeconds, setNoFaceSeconds] = useState(0)
     const [cameraActive, setCameraActive] = useState(false)
     const [faceStatus, setFaceStatus] = useState('searching') // searching | found | away
+    const [audioStatus, setAudioStatus] = useState('initializing') // initializing | ok | noisy | speech | failed
+    const [lipStatus, setLipStatus] = useState('still') // still | moving
+    const audioIntervalRef = useRef(null)
+    const speechRecognitionRef = useRef(null)
+    const lipHistoryRef = useRef([])
 
     // ─── Cooldown-gated warning ───────────────────────────────────────
     const warnWithCooldown = useCallback((key, title, message, type = 'warning', score = 30) => {
@@ -162,7 +168,12 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
             const bw = (x2 - x1) * scaleX
             const bh = (y2 - y1) * scaleY
 
-            const isProhibited = ['cell phone', 'book', 'laptop', 'remote', 'tablet', 'objects', 'pen', 'airpods'].includes(det.name)
+            const isProhibited = [
+                'cell phone', 'mobile', 'phone', 'smartphone', 'mobile phone',
+                'book', 'textbook', 'notebook',
+                'laptop', 'remote', 'tablet', 'objects', 'pen', 'airpods',
+                'calculator', 'smartwatch', 'earpiece'
+            ].includes(det.name)
             const color = isProhibited ? '#ef4444' : (det.name === 'person' ? '#3b82f6' : '#f59e0b')
 
             ctx.shadowColor = isProhibited ? 'rgba(239,68,68,0.7)' : (det.name === 'person' ? 'rgba(59,130,246,0.5)' : 'rgba(245,158,11,0.5)')
@@ -214,8 +225,8 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
             headers: { 'bypass-tunnel-reminder': 'true' }
         })
             .then(r => r.json())
-            .then(d => { if (d.status === 'online') { setBackendOnline(true); console.log("✅ YOLO Backend online") } })
-            .catch(() => console.warn("⚠️ YOLO Backend offline"))
+            .then(d => { if (d.status === 'online') { setBackendOnline(true); backendOnlineRef.current = true; console.log("✅ YOLO Backend online") } })
+            .catch(() => console.warn("⚠️ YOLO Backend offline — frames won't be sent for AI detection"))
     }, [])
 
     // ─── 4. Wait for camera video ─────────────────────────────────────
@@ -241,7 +252,7 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
 
     // ─── 6. Send frame to Flask YOLO backend ─────────────────────────
     const sendFrameToBackend = useCallback(async () => {
-        if (!backendOnline || isSendingRef.current) return
+        if (!backendOnlineRef.current || isSendingRef.current) return
         const screenshot = captureFrame()
         if (!screenshot) return
 
@@ -262,6 +273,14 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
             // Update YOLO boxes ref so the next canvas draw picks them up
             if (data.objects) {
                 yoloBoxesRef.current = data.objects
+                // Debug logging — check browser console to verify detection
+                const prohibited = data.objects.filter(o => o.name !== 'person')
+                if (prohibited.length > 0) {
+                    console.log(`🚨 AI DETECTED: ${prohibited.map(o => `${o.name} (${Math.round(o.accuracy*100)}%)`).join(', ')}`)
+                }
+                if (data.violation) {
+                    console.log(`⚠️ VIOLATION FLAGGED: ${data.violation_details?.msg || 'Unknown'}`)
+                }
             }
 
             if (data.warning) {
@@ -291,7 +310,7 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
         } finally {
             isSendingRef.current = false
         }
-    }, [backendOnline, captureFrame, warnWithCooldown])
+    }, [captureFrame, warnWithCooldown])
 
     // ─── 7. Local MediaPipe inference + canvas drawing ────────────────
     const runLocalInference = useCallback(() => {
@@ -369,6 +388,41 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
                 setFaceStatus('found')
             }
 
+            // ─── Lip Movement (Whisper Detection) ───────────────
+            const topLip = lm[13], bottomLip = lm[14], leftMouth = lm[78], rightMouth = lm[308]
+            
+            // Calculate Mouth Aspect Ratio (MAR)
+            if (topLip && bottomLip && leftMouth && rightMouth) {
+                const verticalDist = Math.abs(topLip.y - bottomLip.y)
+                const horizontalDist = Math.abs(leftMouth.x - rightMouth.x)
+                
+                // Avoid division by zero
+                if (horizontalDist > 0.001) {
+                    const mar = verticalDist / horizontalDist
+                    
+                    // Track MAR history (keep last 20 frames = ~3 seconds at 150ms interval)
+                    lipHistoryRef.current.push(mar)
+                    if (lipHistoryRef.current.length > 20) {
+                        lipHistoryRef.current.shift()
+                    }
+                    
+                    // Analyze variance if we have enough history
+                    if (lipHistoryRef.current.length === 20) {
+                        const maxMar = Math.max(...lipHistoryRef.current)
+                        const minMar = Math.min(...lipHistoryRef.current)
+                        const variance = maxMar - minMar
+                        
+                        // Threshold: If the mouth opens and closes repeatedly, variance will be high
+                        if (variance > 0.05 && maxMar > 0.08) {
+                            setLipStatus('moving')
+                            warnWithCooldown('whisper', '🤫 SILENT WHISPER', 'LIP MOVEMENT / TALKING DETECTED', 'warning', 40)
+                        } else {
+                            setLipStatus('still')
+                        }
+                    }
+                }
+            }
+
         } catch (e) { /* ignore transient errors */ }
     }, [videoRef, onViolation, drawOverlay, warnWithCooldown])
 
@@ -383,6 +437,99 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
             if (noFaceTimerRef.current) clearInterval(noFaceTimerRef.current)
         }
     }, [cameraActive])
+
+    // ─── 9. Audio Monitoring (Noise & Speech) ─────────────────────────
+    useEffect(() => {
+        let isMounted = true;
+        let stream = null;
+        let analyser = null;
+        let dataArray = null;
+
+        const initAudio = async () => {
+            try {
+                const tempStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                if (!isMounted) {
+                    tempStream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+                stream = tempStream;
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                
+                const source = audioCtx.createMediaStreamSource(stream);
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 256;
+                source.connect(analyser);
+                
+                const bufferLength = analyser.frequencyBinCount;
+                dataArray = new Uint8Array(bufferLength);
+                
+                // Volume monitoring loop
+                audioIntervalRef.current = setInterval(() => {
+                    if (!analyser) return;
+                    analyser.getByteFrequencyData(dataArray);
+                    let sum = 0;
+                    for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+                    const avgVolume = sum / bufferLength;
+                    
+                    if (avgVolume > 55) { // Loud noise threshold
+                        setAudioStatus('noisy');
+                        warnWithCooldown('loud_noise', '🔊 LOUD NOISE', 'SUDDEN BACKGROUND NOISE DETECTED', 'warning', 25);
+                        setTimeout(() => setAudioStatus(prev => prev === 'noisy' ? 'ok' : prev), 3000);
+                    } else {
+                        // Don't overwrite 'speech' if it was just set
+                        setAudioStatus(prev => prev === 'speech' ? 'speech' : 'ok');
+                    }
+                }, 1000);
+
+                setAudioStatus('ok');
+
+                // Initialize Speech Recognition for Voice/Words
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (SpeechRecognition) {
+                    const recognition = new SpeechRecognition();
+                    recognition.continuous = true;
+                    recognition.interimResults = true;
+                    recognition.lang = 'en-US';
+                    
+                    recognition.onresult = (event) => {
+                        let transcript = '';
+                        for (let i = event.resultIndex; i < event.results.length; ++i) {
+                            transcript += event.results[i][0].transcript;
+                        }
+                        
+                        if (transcript.trim().length > 0) {
+                            setAudioStatus('speech');
+                            warnWithCooldown('speech', '🎙️ VOICE DETECTED', 'TALKING/SPEECH DETECTED', 'critical', 85);
+                            setTimeout(() => setAudioStatus('ok'), 4000);
+                        }
+                    };
+                    
+                    recognition.onend = () => {
+                        // Restart if it stops abruptly
+                        if (audioStatus !== 'failed') {
+                            try { recognition.start() } catch(e){}
+                        }
+                    };
+                    
+                    recognition.start();
+                    speechRecognitionRef.current = recognition;
+                }
+            } catch (err) {
+                console.error("Audio capture failed:", err);
+                setAudioStatus('failed');
+            }
+        };
+        
+        initAudio();
+        
+        return () => {
+            isMounted = false;
+            if (audioIntervalRef.current) clearInterval(audioIntervalRef.current);
+            if (speechRecognitionRef.current) speechRecognitionRef.current.stop();
+            if (stream) stream.getTracks().forEach(track => track.stop());
+            if (window.speechSynthesis) window.speechSynthesis.cancel();
+        };
+    }, [warnWithCooldown]);
 
     // ─── Render ───────────────────────────────────────────────────────
     return (
@@ -452,6 +599,27 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
                             </span>
                         </span>
                     </div>
+                    
+                    {/* Audio Status */}
+                    <div className="flex items-center gap-2">
+                        {audioStatus === 'speech' ? <Volume2 className="h-3 w-3 text-red-500 animate-pulse" /> : <Mic className={`h-3 w-3 ${audioStatus === 'ok' ? 'text-green-400' : audioStatus === 'noisy' ? 'text-orange-400' : 'text-gray-500'}`} />}
+                        <span className="text-[8px] font-black text-white/50 uppercase tracking-widest">
+                            Mic <span className={audioStatus === 'ok' ? 'text-green-400' : audioStatus === 'speech' ? 'text-red-500 animate-pulse' : audioStatus === 'noisy' ? 'text-orange-400' : 'text-gray-500'}>
+                                {audioStatus === 'ok' ? '✓ Clear' : audioStatus === 'speech' ? '⚠ VOICE' : audioStatus === 'noisy' ? '⚠ NOISE' : '✗ OFF'}
+                            </span>
+                        </span>
+                    </div>
+
+                    {/* Lips Status */}
+                    <div className="flex items-center gap-2">
+                        <MessageSquare className={`h-3 w-3 ${lipStatus === 'still' ? 'text-green-400' : 'text-orange-500 animate-pulse'}`} />
+                        <span className="text-[8px] font-black text-white/50 uppercase tracking-widest">
+                            Lips <span className={lipStatus === 'still' ? 'text-green-400' : 'text-orange-500'}>
+                                {lipStatus === 'still' ? '✓ Still' : '⚠ Moving'}
+                            </span>
+                        </span>
+                    </div>
+
                     <div className="text-[8px] font-black text-white/30 uppercase">
                         {backendOnline ? '🟢 YOLO' : '🔴 YOLO offline'}
                     </div>
