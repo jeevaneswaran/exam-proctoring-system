@@ -498,9 +498,17 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
                         }
                         
                         if (transcript.trim().length > 0) {
+                            console.log("🎤 PROCTORING HEARD:", transcript);
                             setAudioStatus('speech');
                             warnWithCooldown('speech', '🎙️ VOICE DETECTED', 'TALKING/SPEECH DETECTED', 'critical', 85);
                             setTimeout(() => setAudioStatus('ok'), 4000);
+                        }
+                    };
+
+                    recognition.onerror = (event) => {
+                        console.error("❌ Proctoring Speech Recognition Error:", event.error);
+                        if (event.error === 'not-allowed') {
+                            setAudioStatus('failed');
                         }
                     };
                     
@@ -515,7 +523,7 @@ const WebcamProctor = ({ onViolation, videoRef }) => {
                     speechRecognitionRef.current = recognition;
                 }
             } catch (err) {
-                console.error("Audio capture failed:", err);
+                console.error("❌ Audio capture failed:", err);
                 setAudioStatus('failed');
             }
         };

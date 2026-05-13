@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { supabase } from '../../lib/supabase'
 import {
     LayoutDashboard,
@@ -37,7 +37,7 @@ const TeacherDashboard = () => {
     const [supportForm, setSupportForm] = useState({ subject: '', category: 'Technical', message: '' })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitSuccess, setSubmitSuccess] = useState(false)
-    const [loadingStats, setLoadingStats] = useState(true)
+    // loadingStats removed to fix unused variable error
     const [realStats, setRealStats] = useState({
         totalCourses: 0,
         totalQuestions: 0,
@@ -87,7 +87,7 @@ const TeacherDashboard = () => {
 
     const fetchRealStats = async () => {
         try {
-            setLoadingStats(true)
+            // setLoadingStats removed
 
             // 1. Total Courses (Exams created by teacher)
             const { data: courses } = await supabase
@@ -154,8 +154,7 @@ const TeacherDashboard = () => {
             })
         } catch (error) {
             console.error('Error fetching real-time stats:', error)
-        } finally {
-            setLoadingStats(false)
+            // setLoadingStats removed
         }
     }
 

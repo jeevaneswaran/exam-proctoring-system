@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
 import { SupabaseService } from '../../services/SupabaseService'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 import { Timer, AlertTriangle, Sparkles, ShieldCheck, Activity, Terminal, Camera, ArrowRight } from 'lucide-react'
 import EricaChat from '../../components/shared/EricaChat'
@@ -180,7 +180,7 @@ const ExamPage = () => {
                     setExam(examData)
 
                     // Check for existing progress
-                    const { data: progress, error } = await supabase
+                    const { data: progress } = await supabase
                         .from('exam_progress')
                         .select('*')
                         .eq('student_id', user.id)

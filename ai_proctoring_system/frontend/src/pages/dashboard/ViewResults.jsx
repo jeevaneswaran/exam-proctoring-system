@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import {
     BarChart,
     Bar,
@@ -33,9 +33,7 @@ import {
 
 const ViewResults = () => {
     const { user } = useAuth()
-    const navigate = useNavigate()
     const [results, setResults] = useState([])
-    const [loading, setLoading] = useState(true)
     const [searchTerm, setSearchTerm] = useState('')
     const [selectedStudent, setSelectedStudent] = useState(null)
 
@@ -67,8 +65,6 @@ const ViewResults = () => {
             setResults(data || [])
         } catch (error) {
             console.error('Error fetching results:', error.message)
-        } finally {
-            setLoading(false)
         }
     }
 

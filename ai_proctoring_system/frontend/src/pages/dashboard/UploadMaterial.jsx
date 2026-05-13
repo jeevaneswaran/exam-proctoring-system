@@ -12,7 +12,7 @@ import {
 import { useState, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const UploadMaterial = () => {
     const navigate = useNavigate()
@@ -49,7 +49,7 @@ const UploadMaterial = () => {
             const fileName = `${Math.random()}.${fileExt}`
             const filePath = `${user.id}/${fileName}`
 
-            const { data: uploadData, error: uploadError } = await supabase.storage
+            const { error: uploadError } = await supabase.storage
                 .from('materials')
                 .upload(filePath, selectedFile)
 

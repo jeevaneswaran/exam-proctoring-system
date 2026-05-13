@@ -23,7 +23,7 @@ export const SupabaseService = {
     },
 
     // Fetch Exams
-    getExamsForStudent: async (studentId) => {
+    getExamsForStudent: async (_studentId) => {
         // This would typically join with an enrollment table
         const { data, error } = await supabase
             .from('exams')

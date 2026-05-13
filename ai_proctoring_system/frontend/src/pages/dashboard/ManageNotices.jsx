@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../../lib/supabase'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 
 const ManageNotices = () => {
     const { user } = useAuth()
@@ -26,9 +26,9 @@ const ManageNotices = () => {
         if (user) {
             fetchNotices()
         }
-    }, [user])
+    }, [user, fetchNotices])
 
-    const fetchNotices = async () => {
+    const fetchNotices = useCallback(async () => {
         try {
             const { data, error } = await supabase
                 .from('notices')
@@ -43,7 +43,7 @@ const ManageNotices = () => {
         } finally {
             setLoading(false)
         }
-    }
+    }, [user])
 
     const handleSubmit = async (e) => {
         e.preventDefault()

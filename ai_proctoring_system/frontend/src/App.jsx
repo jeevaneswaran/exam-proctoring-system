@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { ThemeProvider } from './contexts/ThemeContext'
+import { useAuth } from './hooks/useAuth'
+import { useTheme } from './hooks/useTheme'
 import Navbar from './components/layout/Navbar'
 import LandingPage from './pages/LandingPage'
 import StudentLogin from './pages/auth/StudentLogin'

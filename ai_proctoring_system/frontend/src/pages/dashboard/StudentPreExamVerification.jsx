@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { FaceLandmarker, FilesetResolver } from "@mediapipe/tasks-vision"
 import { useWebcam } from '../../hooks/useWebcam'
+import EricaChat from '../../components/shared/EricaChat'
 
 const StudentPreExamVerification = () => {
     const navigate = useNavigate()
@@ -114,7 +115,7 @@ const StudentPreExamVerification = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-6 sm:p-10 font-sans">
+        <div className="min-h-screen bg-gray-900 flex flex-col items-center justify-center p-6 sm:p-10 font-sans relative">
             <div className="w-full max-w-4xl bg-white dark:bg-gray-900 rounded-[40px] shadow-2xl overflow-hidden flex flex-col lg:flex-row">
                 <div className="lg:w-1/3 p-10 bg-gray-50 dark:bg-gray-950 flex flex-col justify-between">
                     <div>
@@ -128,7 +129,7 @@ const StudentPreExamVerification = () => {
                         </div>
                         <div className="space-y-6">
                             <div className="flex items-start gap-4">
-                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${videoRef.current ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
+                                <div className={`h-8 w-8 rounded-xl flex items-center justify-center shrink-0 ${isCameraReady ? 'bg-green-100 text-green-600' : 'bg-orange-100 text-orange-600'}`}>
                                     <Camera className="h-4 w-4" />
                                 </div>
                                 <div>
@@ -184,8 +185,11 @@ const StudentPreExamVerification = () => {
                 </div>
             </div>
             <p className="mt-8 text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase tracking-[0.3em] text-center">AI Proctoring System • Unit: <span className="text-gray-300">{examData.title}</span></p>
+            
+            <EricaChat />
         </div>
     )
 }
 
 export default StudentPreExamVerification
+

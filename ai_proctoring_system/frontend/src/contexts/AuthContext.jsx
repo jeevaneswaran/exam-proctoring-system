@@ -1,9 +1,9 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 
-const AuthContext = createContext({})
+import { AuthContext } from './AuthContextObject'
 
-export const useAuth = () => useContext(AuthContext)
+export { AuthContext }
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null)
@@ -13,7 +13,21 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
+        const timeout = setTimeout(() => {
+            if (loading) {
+                console.warn('Auth session check timed out. Proceeding...');
+                setLoading(false);
+            }
+        }, 5000);
+
+        supabase.auth.getSession().then(({ data, error }) => {
+            clearTimeout(timeout)
+            if (error) {
+                console.error('Session check failed:', error)
+                setLoading(false)
+                return
+            }
+            const session = data?.session
             setSession(session)
             setUser(session?.user ?? null)
             if (session?.user) {
@@ -22,11 +36,12 @@ export const AuthProvider = ({ children }) => {
                 setLoading(false)
             }
         }).catch(err => {
-            console.error('Session check failed:', err)
+            clearTimeout(timeout)
+            console.error('Session check failed catch:', err)
             setLoading(false)
         })
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+        const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
             setSession(session)
             setUser(session?.user ?? null)
             if (session?.user) {
@@ -39,7 +54,11 @@ export const AuthProvider = ({ children }) => {
             }
         })
 
-        return () => subscription.unsubscribe()
+        return () => {
+            if (authListener?.subscription) {
+                authListener.subscription.unsubscribe()
+            }
+        }
     }, [])
 
     const fetchuserRole = async (userId, currentUser) => {

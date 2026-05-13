@@ -61,7 +61,7 @@ const LandingPage = () => {
                                 desc: "Detailed analytics and violation logs generated immediately after exams.",
                                 icon: Activity,
                                 color: "text-brand-orange",
-                                bg: "bg-brand-brand-orange/5"
+                                bg: "bg-brand-orange/5"
                             }
                         ].map((feature, i) => (
                             <div key={i} className="p-8 rounded-3xl bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">

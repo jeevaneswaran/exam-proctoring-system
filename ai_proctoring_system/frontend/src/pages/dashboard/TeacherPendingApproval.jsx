@@ -1,4 +1,4 @@
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import { Clock, ClipboardCheck, Bell, ShieldCheck, LogOut } from 'lucide-react'
 
 const TeacherPendingApproval = () => {

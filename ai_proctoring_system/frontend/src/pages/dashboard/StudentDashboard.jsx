@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../../contexts/AuthContext'
+import { useAuth } from '../../hooks/useAuth'
 import {
     LayoutDashboard,
     FileText,
@@ -39,12 +39,9 @@ const StudentDashboard = () => {
     const [notices, setNotices] = useState([])
     const [loadingNotices, setLoadingNotices] = useState(true)
 
-    useEffect(() => {
-        fetchNotices()
-        fetchRealStats()
-    }, [])
 
-    const fetchRealStats = async () => {
+
+    const fetchRealStats = useCallback(async () => {
         try {
             // 1. Get Available Exams count
             const { count: examCount } = await supabase
@@ -80,9 +77,9 @@ const StudentDashboard = () => {
         } catch (error) {
             console.error('Error fetching stats:', error.message)
         }
-    }
+    }, [user])
 
-    const fetchNotices = async () => {
+    const fetchNotices = useCallback(async () => {
         try {
             setLoadingNotices(true)
             const { data, error } = await supabase
@@ -98,7 +95,13 @@ const StudentDashboard = () => {
         } finally {
             setLoadingNotices(false)
         }
-    }
+    }, [])
+
+    useEffect(() => {
+        fetchNotices()
+        fetchRealStats()
+    }, [fetchNotices, fetchRealStats])
+
 
     const handleSupportSubmit = async (e) => {
         e.preventDefault()

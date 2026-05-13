@@ -36,7 +36,7 @@ class ObjectDetectionService {
         return this.processOutput(output0, width, height)
     }
 
-    processOutput(output, width, height) {
+    processOutput(_output, _width, _height) {
         // YOLOv8 output processing logic (simplified)
         // This requires post-processing: decoding boxes, NMS, etc.
         // For this implementation plan, we will return raw detections

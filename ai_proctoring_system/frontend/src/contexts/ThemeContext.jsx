@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 
-const ThemeContext = createContext()
+import { ThemeContext } from './ThemeContextObject'
 
-export const useTheme = () => useContext(ThemeContext)
+export { ThemeContext }
 
 export const ThemeProvider = ({ children }) => {
     // Check if user has previously selected a theme, otherwise check system preference

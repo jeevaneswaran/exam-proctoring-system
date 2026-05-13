@@ -1,18 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { MessageCircle, X, Send, Bot, User, Sparkles } from 'lucide-react'
+import { MessageCircle, X, Send, Bot, User, Sparkles, Mic, MicOff, Volume2 } from 'lucide-react'
+import { useVoiceAssistant } from '../../hooks/useVoiceAssistant'
 
 const EricaChat = ({ context = "general" }) => {
     const [isOpen, setIsOpen] = useState(false)
     const [messages, setMessages] = useState([
         {
             role: 'bot',
-            text: "Hello! I'm Erica, your AI Proctroring Assistant. I'm here to guide you through the exam setup and ensure a smooth experience. How can I help you today?",
+            text: "Hello! I'm Erica, your AI Proctoring Assistant. I'm here to guide you through the exam setup and ensure a smooth experience. How can I help you today?",
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
     ])
     const [inputValue, setInputValue] = useState('')
     const [isTyping, setIsTyping] = useState(false)
     const chatEndRef = useRef(null)
+
+    const onSpeechRecognized = (transcript) => {
+        setInputValue(transcript);
+        // Automatically send after voice recognition for a true assistant feel
+        handleSend(transcript);
+    };
+
+    const { isListening, startListening, stopListening, speak } = useVoiceAssistant(onSpeechRecognized);
 
     const scrollToBottom = () => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -22,12 +31,13 @@ const EricaChat = ({ context = "general" }) => {
         scrollToBottom()
     }, [messages])
 
-    const handleSend = () => {
-        if (!inputValue.trim()) return
+    const handleSend = (textOverride) => {
+        const textToSend = typeof textOverride === 'string' ? textOverride : inputValue;
+        if (!textToSend.trim()) return
 
         const userMessage = {
             role: 'user',
-            text: inputValue,
+            text: textToSend,
             time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }
 
@@ -39,9 +49,9 @@ const EricaChat = ({ context = "general" }) => {
         setTimeout(() => {
             let responseText = "I'm analyzing your request. Please ensure you remain within the camera's view at all times."
 
-            if (inputValue.toLowerCase().includes('help')) {
+            if (textToSend.toLowerCase().includes('help')) {
                 responseText = "I can help with hardware checks, environment calibration, or clarifying exam rules. What do you need specifically?"
-            } else if (inputValue.toLowerCase().includes('rule')) {
+            } else if (textToSend.toLowerCase().includes('rule')) {
                 responseText = "The main rules are: 1. No secondary devices. 2. No other people in the room. 3. Stay in the camera frame. 4. No external tabs or windows."
             }
 
@@ -52,6 +62,9 @@ const EricaChat = ({ context = "general" }) => {
             }
             setMessages(prev => [...prev, botMessage])
             setIsTyping(false)
+
+            // Speak the response
+            speak(responseText);
         }, 1500)
     }
 
@@ -121,16 +134,25 @@ const EricaChat = ({ context = "general" }) => {
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                                placeholder="Ask Erica anything..."
-                                className="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                                placeholder={isListening ? "Listening..." : "Ask Erica anything..."}
+                                className={`w-full pl-4 pr-24 py-3 bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-xl text-sm font-medium focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all ${isListening ? 'ring-2 ring-amber-500 animate-pulse' : ''}`}
                             />
-                            <button
-                                onClick={handleSend}
-                                disabled={!inputValue.trim()}
-                                className="absolute right-2 p-2 bg-[#1A1612] text-white rounded-lg hover:bg-black transition-all disabled:opacity-50"
-                            >
-                                <Send className="h-4 w-4 text-amber-500" />
-                            </button>
+                            <div className="absolute right-2 flex items-center gap-1">
+                                <button
+                                    onClick={isListening ? stopListening : startListening}
+                                    className={`p-2 rounded-lg transition-all ${isListening ? 'bg-red-500 text-white animate-bounce' : 'bg-gray-100 dark:bg-gray-800 text-gray-500 hover:text-amber-500'}`}
+                                    title={isListening ? "Stop Listening" : "Start Listening"}
+                                >
+                                    {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                                </button>
+                                <button
+                                    onClick={() => handleSend()}
+                                    disabled={!inputValue.trim()}
+                                    className="p-2 bg-[#1A1612] text-white rounded-lg hover:bg-black transition-all disabled:opacity-50"
+                                >
+                                    <Send className="h-4 w-4 text-amber-500" />
+                                </button>
+                            </div>
                         </div>
                         <p className="text-[9px] text-gray-400 text-center mt-3 font-bold uppercase tracking-widest flex items-center justify-center gap-2">
                             <Sparkles className="h-3 w-3 text-amber-500" />
@@ -162,3 +184,4 @@ const EricaChat = ({ context = "general" }) => {
 }
 
 export default EricaChat
+

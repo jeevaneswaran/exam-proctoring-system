@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { MessageSquare, X, Send, Sparkles, Loader2, User, Bot, Minimize2, Maximize2 } from 'lucide-react'
+import { MessageSquare, X, Send, Sparkles, Loader2, User, Bot, Minimize2, Maximize2, Mic, MicOff } from 'lucide-react'
+import { useVoiceAssistant } from '../../hooks/useVoiceAssistant'
 
 const AISupportBot = () => {
     const [isOpen, setIsOpen] = useState(false)
@@ -10,6 +11,13 @@ const AISupportBot = () => {
     const [input, setInput] = useState('')
     const [isTyping, setIsTyping] = useState(false)
     const scrollRef = useRef(null)
+
+    const onSpeechRecognized = (transcript) => {
+        setInput(transcript);
+        handleSend(transcript);
+    };
+
+    const { isListening, startListening, stopListening, speak } = useVoiceAssistant(onSpeechRecognized);
 
     const RESPONSE_MAP = {
         proctoring: "Our AI Proctoring system monitors your environment. Ensure you are alone, in a well-lit room, and no prohibited objects (like phones) are visible.",
@@ -51,6 +59,9 @@ const AISupportBot = () => {
 
             setMessages(prev => [...prev, { role: 'bot', text: botResponse }])
             setIsTyping(false)
+            
+            // Speak response
+            speak(botResponse);
         }, 800)
     }
 
@@ -148,16 +159,25 @@ const AISupportBot = () => {
 
                     {/* Input Area */}
                     <form onSubmit={onFormSubmit} className="p-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex gap-2">
-                        <input
-                            type="text"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                            placeholder="Type your question..."
-                            className="flex-1 bg-gray-50 dark:bg-gray-950 border-none rounded-2xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none"
-                        />
+                        <div className="flex-1 relative">
+                            <input
+                                type="text"
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                placeholder={isListening ? "Listening..." : "Type your question..."}
+                                className={`w-full bg-gray-50 dark:bg-gray-950 border-none rounded-2xl px-4 py-3 pr-12 text-sm font-medium focus:ring-2 focus:ring-orange-500 outline-none ${isListening ? 'ring-2 ring-orange-500 animate-pulse' : ''}`}
+                            />
+                            <button
+                                type="button"
+                                onClick={isListening ? stopListening : startListening}
+                                className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-xl transition-all ${isListening ? 'text-red-500 bg-red-50 animate-pulse' : 'text-gray-400 hover:text-orange-600'}`}
+                            >
+                                {isListening ? <MicOff className="h-4 w-4" /> : <Mic className="h-4 w-4" />}
+                            </button>
+                        </div>
                         <button
                             type="submit"
-                            className="h-12 w-12 bg-gray-900 text-white rounded-2xl flex items-center justify-center hover:bg-orange-600 transition-all shadow-lg"
+                            className="h-12 w-12 bg-gray-900 text-white rounded-2xl flex items-center justify-center hover:bg-orange-600 transition-all shadow-lg shrink-0"
                         >
                             <Send className="h-5 w-5" />
                         </button>
@@ -169,3 +189,4 @@ const AISupportBot = () => {
 }
 
 export default AISupportBot
+
